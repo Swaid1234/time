@@ -685,13 +685,13 @@ function submitEmp(){
   if(!nm||!id||!mob||!dept||!dt||!st||!et||!rs) return showErr(el,'يرجى ملء جميع الحقول المطلوبة');
   if(!/^[12]\d{9}$/.test(id)) return showErr(el,'رقم الهوية غير صحيح (10 أرقام يبدأ بـ 1 أو 2)');
   if(!/^05\d{8}$/.test(mob)) return showErr(el,'رقم الجوال غير صحيح (يبدأ بـ 05)');
-
+  
   hideErr(el);
   const sup=DB.users().find(s=>s.id===sid);
   const[sh,sm]=st.split(':').map(Number),[eh,em]=et.split(':').map(Number);
   let mins=(eh*60+em)-(sh*60+sm);
-  if(mins<=0) mins+=1440;
-  const hrs=(mins/60).toFixed(1);
+if(mins<=0) mins+=1440;
+const hrs=(mins/60).toFixed(1);
   const req={
     id:'REQ-'+Date.now(),
     employeeName:nm,idNumber:id,mobile:mob,department:dept,
