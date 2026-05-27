@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام إدارة الأوفرتايم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --bg: #080F1E;
+  --bg2: #0D1A2E;
+  --card: rgba(13,26,46,0.85);
+  --gold: #C9A84C;
+  --gold2: #E8C97A;
+  --gold3: #8A6A1E;
+  --white: #FFFFFF;
+  --muted: #7A8FA6;
+  --ok: #3DD68C;
+  --err: #FF6B6B;
+  --warn: #FFB627;
+  --info: #60A5FA;
+  --border: rgba(201,168,76,0.18);
+  --sh: 0 24px 64px rgba(0,0,0,0.55);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'Cairo',sans-serif;
+  background:var(--bg);
+  color:var(--white);
+  direction:rtl;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 15%,rgba(201,168,76,0.07),transparent),
+    radial-gradient(ellipse 50% 60% at 85% 85%,rgba(10,22,40,0.95),transparent),
+    linear-gradient(160deg,#080F1E 0%,#0D1A2E 100%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── Pages ──────────────────────────────── */
+.page{
+  position:fixed;inset:0;
+  overflow-y:auto;
+  z-index:1;
+  opacity:0;transform:translateY(18px);
+  pointer-events:none;
+  transition:opacity .4s cubic-bezier(.16,1,.3,1),transform .4s cubic-bezier(.16,1,.3,1);
+}
+.page.active{opacity:1;transform:translateY(0);pointer-events:all;}
+
+/* ── Header ─────────────────────────────── */
+.hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 1.25rem;
+  background:rgba(8,15,30,0.92);
+  backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.hdr-left{display:flex;align-items:center;gap:.65rem;}
+.hdr-logo{width:38px;height:38px;border-radius:9px;object-fit:contain;}
+.hdr-logo-ph{
+  width:38px;height:38px;border-radius:9px;
+  background:linear-gradient(135deg,var(--gold),var(--gold3));
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+}
+.hdr h1{font-size:1rem;font-weight:800;color:var(--gold);}
+.btn-back{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);padding:.35rem .75rem;border-radius:8px;
+  cursor:pointer;font-family:'Cairo',sans-serif;font-size:.8rem;
+  transition:all .2s;
+}
+.btn-back:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── Wrap ──────────────────────────────── */
+.wrap{max-width:880px;margin:0 auto;padding:1.25rem;}
+
+/* ── Card ──────────────────────────────── */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:1.4rem;
+  backdrop-filter:blur(18px);
+  box-shadow:var(--sh);
+}
+
+/* ── Home ──────────────────────────────── */
+.home-hero{
+  text-align:center;
+  padding:2.5rem 1.25rem 1.5rem;
+}
+.home-hero h2{
+  font-size:1.8rem;font-weight:900;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.35rem;
+}
+.home-hero p{color:var(--muted);font-size:.9rem;}
+.home-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1rem;
+  padding:0 1.25rem 2rem;
+  max-width:880px;margin:0 auto;
+}
+.hcard{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;padding:2rem 1.25rem;
+  text-align:center;cursor:pointer;
+  transition:all .3s cubic-bezier(.16,1,.3,1);
+  position:relative;overflow:hidden;
+}
+.hcard::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(201,168,76,.1),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.hcard:hover::before{opacity:1;}
+.hcard:hover{
+  transform:translateY(-5px);
+  border-color:var(--gold);
+  box-shadow:0 20px 40px rgba(201,168,76,.18);
+}
+.hcard-icon{font-size:2.8rem;margin-bottom:.85rem;display:block;}
+.hcard h3{font-size:1.1rem;font-weight:800;margin-bottom:.35rem;}
+.hcard p{color:var(--muted);font-size:.82rem;}
+
+/* ── Form ──────────────────────────────── */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+@media(max-width:560px){.fgrid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:.35rem;}
+.fg.full{grid-column:1/-1;}
+.fg label{font-size:.8rem;color:var(--gold);font-weight:700;letter-spacing:.02em;}
+.fg input,.fg select,.fg textarea{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:10px;padding:.7rem .95rem;
+  color:var(--white);font-family:'Cairo',sans-serif;font-size:.88rem;
+  transition:all .2s;width:100%;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  outline:none;border-color:var(--gold);background:rgba(201,168,76,.05);
+  box-shadow:0 0 0 3px rgba(201,168,76,.12);
+}
+.fg select option{background:#0D1A2E;}
+.fg textarea{resize:vertical;min-height:75px;}
+.fg input[type="file"]{padding:.5rem;}
+
+/* ── Buttons ─────────────────────────── */
+.btn{
+  padding:.7rem 1.35rem;border-radius:11px;border:none;
+  cursor:pointer;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;
+  transition:all .25s;display:inline-flex;align-items:center;
+  gap:.4rem;justify-content:center;
+}
+.btn-p{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#080F1E;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,.38);}
+.btn-s{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-s:hover{border-color:var(--gold);color:var(--gold);}
+.btn-ok{background:linear-gradient(135deg,#3DD68C,#1A8F5A);color:#fff;}
+.btn-ok:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(61,214,140,.3);}
+.btn-err{background:linear-gradient(135deg,#FF6B6B,#B91C1C);color:#fff;}
+.btn-err:hover{transform:translateY(-2px);}
+.btn-full{width:100%;}
+
+/* ── Section title ───────────────────── */
+.stitle{
+  font-size:1.15rem;font-weight:800;color:var(--gold);
+  margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.stitle::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Login ───────────────────────────── */
+.login-wrap{
+  min-height:100vh;display:flex;
+  align-items:center;justify-content:center;padding:1.5rem;
+}
+.lcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:2.25rem 1.75rem;
+  width:100%;max-width:390px;
+  backdrop-filter:blur(18px);box-shadow:var(--sh);
+}
+.l-ico{font-size:2.8rem;text-align:center;margin-bottom:.8rem;}
+.l-title{text-align:center;font-size:1.35rem;font-weight:900;color:var(--gold);margin-bottom:.2rem;}
+.l-sub{text-align:center;color:var(--muted);font-size:.82rem;margin-bottom:1.75rem;}
+
+/* ── Stats grid ──────────────────────── */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;margin-bottom:1.5rem;}
+.sc{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:.85rem;text-align:center;}
+.sc .num{font-size:1.85rem;font-weight:900;color:var(--gold);}
+.sc .lbl{font-size:.75rem;color:var(--muted);}
+
+/* ── Tabs ────────────────────────────── */
+.tabs{
+  display:flex;gap:.4rem;margin-bottom:1.25rem;
+  background:rgba(255,255,255,.02);
+  padding:4px;border-radius:12px;border:1px solid var(--border);
+  overflow-x:auto;
+}
+.tbtn{
+  padding:.55rem .9rem;border-radius:8px;border:none;
+  background:transparent;color:var(--muted);
+  font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:700;
+  cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;
+}
+.tbtn.on{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#080F1E;}
+.tpanel{display:none;}
+.tpanel.on{display:block;}
+
+/* ── Request cards ───────────────────── */
+.rlist{display:flex;flex-direction:column;gap:.85rem;}
+.rcard{
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
+  border-radius:14px;padding:1.1rem;transition:all .2s;
+}
+.rcard:hover{border-color:var(--gold);background:rgba(201,168,76,.03);}
+.rcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.7rem;gap:.5rem;}
+.rcard-name{font-size:.95rem;font-weight:800;}
+.badge{padding:.2rem .65rem;border-radius:20px;font-size:.72rem;font-weight:700;white-space:nowrap;}
+.b-pend{background:rgba(255,182,39,.12);color:var(--warn);}
+.b-sup{background:rgba(96,165,250,.12);color:var(--info);}
+.b-appr{background:rgba(61,214,140,.12);color:var(--ok);}
+.b-rej{background:rgba(255,107,107,.12);color:var(--err);}
+.rinfo{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.8rem;color:var(--muted);}
+.rinfo strong{color:var(--white);}
+.ract{display:flex;gap:.5rem;margin-top:.9rem;flex-wrap:wrap;}
+
+/* ── Sig canvas ──────────────────────── */
+.sig-box{
+  border:2px dashed var(--border);border-radius:12px;
+  overflow:hidden;background:rgba(255,255,255,.96);
+  cursor:crosshair;
+}
+.sig-box canvas{display:block;width:100%;touch-action:none;}
+.sig-bar{display:flex;gap:.4rem;margin-top:.4rem;}
+
+/* ── Modal ───────────────────────────── */
+.moverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);
+  backdrop-filter:blur(10px);z-index:999;
+  display:flex;align-items:center;justify-content:center;
+  padding:1rem;opacity:0;pointer-events:none;
+  transition:opacity .3s;
+}
+.moverlay.on{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:22px;padding:1.75rem;
+  max-width:500px;width:100%;
+  transform:scale(.9);transition:transform .3s cubic-bezier(.16,1,.3,1);
+  max-height:90vh;overflow-y:auto;
+}
+.moverlay.on .modal{transform:scale(1);}
+.mtitle{font-size:1.1rem;font-weight:800;color:var(--gold);margin-bottom:1rem;}
+
+/* ── Users table ─────────────────────── */
+.sup-item{
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
+  border-radius:12px;padding:.9rem 1rem;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:.75rem;margin-bottom:.65rem;
+}
+.sup-item-info .name{font-weight:700;font-size:.92rem;}
+.sup-item-info .meta{font-size:.76rem;color:var(--muted);margin-top:.2rem;}
+
+/* ── Alert ───────────────────────────── */
+.al{padding:.75rem 1rem;border-radius:9px;font-size:.85rem;margin-bottom:.75rem;}
+.al-err{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--err);}
+.al-ok{background:rgba(61,214,140,.1);border:1px solid rgba(61,214,140,.3);color:var(--ok);}
+
+/* ── Empty ───────────────────────────── */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);}
+.empty .ico{font-size:2.5rem;margin-bottom:.75rem;}
+
+/* ── Path indicator ──────────────────── */
+.path{
+  display:flex;align-items:center;gap:.35rem;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:10px;padding:.6rem 1rem;margin-bottom:1.25rem;
+  overflow-x:auto;font-size:.78rem;color:var(--muted);
+  flex-shrink:0;
+}
+.path-step{white-space:nowrap;display:flex;align-items:center;gap:.25rem;}
+.path-step.done{color:var(--ok);}
+.path-step.active{color:var(--gold);font-weight:700;}
+.path-sep{color:var(--border);}
+
+/* ── PDF preview ─────────────────────── */
+#pdf-content{background:#fff;color:#111;padding:1.5rem;border-radius:10px;direction:rtl;font-family:Cairo,sans-serif;}
+
+/* ── Scrollbar ───────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ── Keyframes ───────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pop{0%{transform:scale(.8);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.anim{animation:fadeUp .4s ease both;}
+.anim2{animation:fadeUp .4s .1s ease both;}
+.anim3{animation:fadeUp .4s .2s ease both;}
+
+/* ── Responsive ──────────────────────── */
+@media(max-width:440px){
+  .home-hero h2{font-size:1.4rem;}
+  .lcard{padding:1.5rem 1.2rem;}
+  .card,.wrap{padding:.9rem;}
+  .rinfo{grid-template-columns:1fr;}
+  .ract{flex-direction:column;}
+  .ract .btn{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ HOME ════════════ -->
+<div id="p-home" class="page active">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div id="hl-home" class="hdr-logo-ph">🏢</div>
+      <h1 id="cn-home">نظام الأوفرتايم</h1>
+    </div>
+  </div>
+  <div class="home-hero anim">
+    <h2>نظام إدارة طلبات الأوفرتايم</h2>
+    <p>منصة متكاملة لتقديم ومتابعة طلبات العمل الإضافي</p>
+  </div>
+  <div class="home-grid">
+    <div class="hcard anim" onclick="showPage('p-emp')">
+      <span class="hcard-icon">📋</span>
+      <h3>طلب أوفرتايم</h3>
+      <p>تقديم طلب عمل إضافي جديد</p>
+    </div>
+    <div class="hcard anim2" onclick="showPage('p-sup-login')">
+      <span class="hcard-icon">👨‍💼</span>
+      <h3>بوابة المشرف</h3>
+      <p>مراجعة وتأكيد طلبات الموظفين</p>
+    </div>
+    <div class="hcard anim3" onclick="showPage('p-adm-login')">
+      <span class="hcard-icon">🏛️</span>
+      <h3>بوابة الإدارة</h3>
+      <p>إدارة الطلبات والمشرفين والإعدادات</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ EMPLOYEE FORM ════════════ -->
+<div id="p-emp" class="page">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div id="hl-emp" class="hdr-logo-ph">🏢</div>
+      <h1>طلب أوفرتايم</h1>
+    </div>
+    <button class="btn-back" onclick="showPage('p-home')">← رجوع</button>
+  </div>
+  <div class="wrap">
+    <div class="card anim">
+      <div class="stitle">📋 بيانات طلب العمل الإضافي</div>
+      <div class="fgrid">
+        <div class="fg"><label>اسم الموظف</label><input id="e-name" placeholder="الاسم الرباعي"></div>
+        <div class="fg"><label>رقم الهوية</label><input id="e-id" placeholder="1XXXXXXXXX" maxlength="10"></div>
+        <div class="fg"><label>رقم الجوال</label><input id="e-mob" type="tel" placeholder="05XXXXXXXX" maxlength="10"></div>
+        <div class="fg"><label>القسم / الإدارة</label><input id="e-dept" placeholder="اسم القسم"></div>
+        <div class="fg"><label>اسم مسؤول الأوفرتايم <span style="color:var(--muted);font-weight:400;font-size:.75rem">(اختياري)</span></label>
+          <input id="e-sup" placeholder="اكتب اسم المسؤول"></div>
+
+        <div class="fg"><label>تاريخ الأوفرتايم</label><input id="e-date" type="date"></div>
+        <div class="fg"><label>وقت البداية</label><input id="e-st" type="time"></div>
+        <div class="fg"><label>وقت النهاية</label><input id="e-et" type="time"></div>
+        <div class="fg full"><label>سبب الأوفرتايم</label>
+          <textarea id="e-reason" placeholder="اذكر سبب طلب العمل الإضافي..."></textarea>
+        </div>
+      </div>
+      <div id="e-err" class="al al-err" style="display:none;margin-top:.75rem"></div>
+      <button class="btn btn-p btn-full" style="margin-top:1.25rem" onclick="submitEmp()">📤 إرسال الطلب</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SUPERVISOR LOGIN ════════════ -->
+<div id="p-sup-login" class="page">
+  <div class="login-wrap">
+    <div class="lcard anim">
+      <div class="l-ico">👨‍💼</div>
+      <div class="l-title">بوابة المشرف</div>
+      <div class="l-sub">تسجيل الدخول لمراجعة الطلبات</div>
+      <div class="fg" style="margin-bottom:.85rem">
+        <label>اسم المستخدم</label>
+        <input id="sl-user" placeholder="اسم المستخدم">
+      </div>
+      <div class="fg" style="margin-bottom:1.25rem">
+        <label>كلمة المرور</label>
+        <input id="sl-pass" type="password" placeholder="••••••••" onkeypress="if(event.key==='Enter')loginSup()">
+      </div>
+      <div id="sl-err" class="al al-err" style="display:none"></div>
+      <button class="btn btn-p btn-full" onclick="loginSup()">تسجيل الدخول</button>
+      <button class="btn btn-s btn-full" style="margin-top:.65rem" onclick="showPage('p-home')">رجوع</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SUPERVISOR DASHBOARD ════════════ -->
+<div id="p-sup-dash" class="page">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-logo-ph">👨‍💼</div>
+      <h1>لوحة المشرف</h1>
+    </div>
+    <button class="btn-back" onclick="logout()">خروج</button>
+  </div>
+  <div class="wrap">
+    <div style="font-size:.85rem;color:var(--muted);margin-bottom:1.1rem">مرحباً، <strong id="sd-name" style="color:var(--gold)"></strong></div>
+    <div class="sgrid" id="sd-stats"></div>
+    <div class="stitle">📋 الطلبات</div>
+    <div id="sd-list" class="rlist"></div>
+  </div>
+</div>
+
+<!-- ════════════ ADMIN LOGIN ════════════ -->
+<div id="p-adm-login" class="page">
+  <div class="login-wrap">
+    <div class="lcard anim">
+      <div class="l-ico">🏛️</div>
+      <div class="l-title">بوابة الإدارة</div>
+      <div class="l-sub">الدخول الخاص بالإدارة العليا</div>
+      <div class="fg" style="margin-bottom:.85rem">
+        <label>اسم المستخدم</label>
+        <input id="al-user" placeholder="admin">
+      </div>
+      <div class="fg" style="margin-bottom:1.25rem">
+        <label>كلمة المرور</label>
+        <input id="al-pass" type="password" placeholder="••••••••" onkeypress="if(event.key==='Enter')loginAdm()">
+      </div>
+      <div id="al-err" class="al al-err" style="display:none"></div>
+      <button class="btn btn-p btn-full" onclick="loginAdm()">تسجيل الدخول</button>
+      <button class="btn btn-s btn-full" style="margin-top:.65rem" onclick="showPage('p-home')">رجوع</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ ADMIN DASHBOARD ════════════ -->
+<div id="p-adm-dash" class="page">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div id="hl-adm" class="hdr-logo-ph">🏛️</div>
+      <h1>لوحة الإدارة</h1>
+    </div>
+    <button class="btn-back" onclick="logout()">خروج</button>
+  </div>
+  <div class="wrap">
+    <div class="tabs">
+      <button class="tbtn on" onclick="switchTab('t-req',this)">📋 الطلبات</button>
+      <button class="tbtn" onclick="switchTab('t-sups',this)">👥 المشرفون</button>
+      <button class="tbtn" onclick="switchTab('t-set',this)">⚙️ الإعدادات</button>
+    </div>
+
+    <!-- Requests -->
+    <div id="t-req" class="tpanel on">
+      <div class="sgrid" id="ad-stats"></div>
+      <div class="stitle">📋 جميع الطلبات</div>
+      <div id="ad-list" class="rlist"></div>
+    </div>
+
+    <!-- Supervisors -->
+    <div id="t-sups" class="tpanel">
+      <div class="stitle">➕ إضافة مشرف جديد</div>
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="fgrid">
+          <div class="fg"><label>اسم المشرف</label><input id="ns-name" placeholder="الاسم الكامل"></div>
+          <div class="fg"><label>اسم المستخدم</label><input id="ns-user" placeholder="username"></div>
+          <div class="fg"><label>كلمة المرور</label><input id="ns-pass" type="password" placeholder="••••••••"></div>
+          <div class="fg"><label>القسم</label><input id="ns-dept" placeholder="اسم القسم"></div>
+          <div class="fg"><label>رقم الهوية</label><input id="ns-id" placeholder="1XXXXXXXXX" maxlength="10"></div>
+          <div class="fg"><label>رقم الجوال</label><input id="ns-mob" type="tel" placeholder="05XXXXXXXX" maxlength="10"></div>
+        </div>
+        <div id="ns-err" class="al al-err" style="display:none;margin-top:.75rem"></div>
+        <button class="btn btn-p" style="margin-top:1rem" onclick="createSup()">✅ إنشاء حساب المشرف</button>
+      </div>
+      <div class="stitle">قائمة المشرفين</div>
+      <div id="sups-list"></div>
+    </div>
+
+    <!-- Settings -->
+    <div id="t-set" class="tpanel">
+      <div class="stitle">⚙️ الإعدادات</div>
+      <div class="card" style="margin-bottom:1rem">
+        <div style="font-size:.95rem;font-weight:700;color:var(--gold);margin-bottom:.85rem">🏢 شعار الشركة</div>
+        <div id="logo-prev-wrap" style="display:none;margin-bottom:.75rem">
+          <img id="logo-prev" style="max-height:80px;object-fit:contain;background:rgba(255,255,255,.06);padding:.4rem;border-radius:8px">
+        </div>
+        <div class="fg" style="margin-bottom:.75rem">
+          <label>رفع شعار الشركة</label>
+          <input type="file" id="logo-up" accept="image/*" onchange="uploadLogo(this)">
+        </div>
+        <button class="btn btn-err" style="font-size:.8rem;padding:.45rem .85rem" onclick="removeLogo()">🗑️ حذف الشعار</button>
+      </div>
+      <div class="card">
+        <div style="font-size:.95rem;font-weight:700;color:var(--gold);margin-bottom:.85rem">🔐 تغيير كلمة مرور الإدارة</div>
+        <div class="fg" style="margin-bottom:.75rem"><label>كلمة المرور الحالية</label><input id="cp-old" type="password" placeholder="••••••••"></div>
+        <div class="fg" style="margin-bottom:.75rem"><label>كلمة المرور الجديدة</label><input id="cp-new" type="password" placeholder="••••••••"></div>
+        <div id="cp-msg" style="display:none;margin-bottom:.65rem"></div>
+        <button class="btn btn-p" onclick="changePw()">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODALS ════════════ -->
+
+<!-- Success -->
+<div id="m-success" class="moverlay">
+  <div class="modal" style="text-align:center">
+    <div style="font-size:3.5rem;margin-bottom:.75rem">✅</div>
+    <div style="font-size:1.25rem;font-weight:800;color:var(--ok);margin-bottom:.4rem">تم إرسال الطلب بنجاح!</div>
+    <div style="color:var(--muted);font-size:.85rem;margin-bottom:1.75rem">سيتم مراجعة طلبك من قِبل المشرف المسؤول</div>
+    <button class="btn btn-p btn-full" onclick="newReq()">📋 تقديم طلب جديد</button>
+    <button class="btn btn-s btn-full" style="margin-top:.65rem" onclick="closeM('m-success');showPage('p-home')">العودة للرئيسية</button>
+  </div>
+</div>
+
+<!-- Supervisor Sign -->
+<div id="m-sup-sign" class="moverlay">
+  <div class="modal">
+    <div class="mtitle">✍️ تأكيد وتوقيع المشرف</div>
+    <div id="mss-info" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.85rem;margin-bottom:1rem;font-size:.82rem;color:var(--muted)"></div>
+    <div style="margin-bottom:.75rem">
+      <label style="font-size:.8rem;color:var(--gold);font-weight:700;display:block;margin-bottom:.5rem">التوقيع الإلكتروني</label>
+      <div class="sig-box"><canvas id="ss-canvas" height="150"></canvas></div>
+      <div class="sig-bar"><button class="btn btn-s" style="font-size:.78rem;padding:.35rem .7rem" onclick="clrCanvas('ss-canvas')">🗑️ مسح</button></div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap">
+      <button class="btn btn-ok" style="flex:1" onclick="supApprove()">✅ موافقة</button>
+      <button class="btn btn-err" onclick="supReject()">❌ رفض</button>
+      <button class="btn btn-s" onclick="closeM('m-sup-sign')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Sign -->
+<div id="m-adm-sign" class="moverlay">
+  <div class="modal">
+    <div class="mtitle">🏛️ توقيع واعتماد الإدارة</div>
+    <div id="mas-info" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.85rem;margin-bottom:1rem;font-size:.82rem;color:var(--muted)"></div>
+    <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
+      <button id="sb-draw" class="btn btn-p" style="font-size:.8rem;padding:.4rem .8rem" onclick="setSigMode('draw')">✍️ رسم التوقيع</button>
+      <button id="sb-up" class="btn btn-s" style="font-size:.8rem;padding:.4rem .8rem" onclick="setSigMode('upload')">📤 رفع توقيع</button>
+    </div>
+    <div id="adm-draw">
+      <div class="sig-box"><canvas id="as-canvas" height="150"></canvas></div>
+      <div class="sig-bar"><button class="btn btn-s" style="font-size:.78rem;padding:.35rem .7rem" onclick="clrCanvas('as-canvas')">🗑️ مسح</button></div>
+    </div>
+    <div id="adm-up" style="display:none">
+      <div class="fg"><label>صورة التوقيع</label><input type="file" id="as-file" accept="image/*" onchange="prevAdmSig(this)"></div>
+      <div id="as-prev" style="margin-top:.5rem"></div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap">
+      <button class="btn btn-ok" style="flex:1" onclick="admApprove()">✅ اعتماد الطلب</button>
+      <button class="btn btn-err" onclick="admReject()">❌ رفض</button>
+      <button class="btn btn-s" onclick="closeM('m-adm-sign')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF Modal -->
+<div id="m-pdf" class="moverlay">
+  <div class="modal" style="max-width:680px;width:95vw">
+    <div class="mtitle">📄 معاينة وتصدير الطلب</div>
+    <div id="pdf-content"></div>
+    <div style="display:flex;gap:.65rem;margin-top:1rem">
+      <button class="btn btn-p" style="flex:1" onclick="exportPDF()">⬇️ تحميل PDF</button>
+      <button class="btn btn-s" onclick="closeM('m-pdf')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Del confirm -->
+<div id="m-del" class="moverlay">
+  <div class="modal">
+    <div class="mtitle">⚠️ تأكيد الحذف</div>
+    <p style="color:var(--muted);margin-bottom:1.25rem">هل أنت متأكد من حذف هذا المشرف؟ لا يمكن التراجع.</p>
+    <div style="display:flex;gap:.5rem">
+      <button class="btn btn-err" style="flex:1" id="del-confirm-btn">نعم، حذف</button>
+      <button class="btn btn-s" onclick="closeM('m-del')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DB
+// ══════════════════════════════════════════
+const DB = {
+  init(){
+    if(!ls('ot_users')){
+      ls('ot_users',JSON.stringify([
+        {id:'adm-001',username:'admin',password:'admin@2024',role:'admin',name:'الإدارة العامة',department:'الإدارة'}
+      ]));
+    }
+    if(!ls('ot_req')) ls('ot_req',JSON.stringify([]));
+    if(!ls('ot_cfg')) ls('ot_cfg',JSON.stringify({logo:null}));
+  },
+  users(){ try{return JSON.parse(ls('ot_users')||'[]');}catch{return[];} },
+  saveU(u){ ls('ot_users',JSON.stringify(u)); },
+  reqs(){ try{return JSON.parse(ls('ot_req')||'[]');}catch{return[];} },
+  saveR(r){ ls('ot_req',JSON.stringify(r)); },
+  cfg(){ try{return JSON.parse(ls('ot_cfg')||'{}');}catch{return{};} },
+  saveC(c){ ls('ot_cfg',JSON.stringify(c)); }
+};
+function ls(k,v){ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let CU=null, CRid=null, admSigMode='draw', admUpSig=null;
+
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById(id);
+  if(pg){pg.classList.add('active');pg.scrollTop=0;}
+  if(id==='p-emp') loadSupSel();
+  if(id==='p-sup-dash') loadSupDash();
+  if(id==='p-adm-dash') loadAdmDash();
+}
+function switchTab(tid,btn){
+  document.querySelectorAll('.tpanel').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById(tid).classList.add('on');
+  btn.classList.add('on');
+  if(tid==='t-sups') loadSupsList();
+  if(tid==='t-set') loadSettings();
+}
+function logout(){
+  CU=null;
+  document.getElementById('sl-user').value='';
+  document.getElementById('sl-pass').value='';
+  document.getElementById('al-user').value='';
+  document.getElementById('al-pass').value='';
+  showPage('p-home');
+}
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function loginSup(){
+  const u=val('sl-user'),p=val('sl-pass'),el=document.getElementById('sl-err');
+  if(!u||!p){return showErr(el,'يرجى إدخال اسم المستخدم وكلمة المرور');}
+  const user=DB.users().find(x=>x.username===u&&x.password===p&&x.role==='supervisor');
+  if(!user) return showErr(el,'اسم المستخدم أو كلمة المرور غير صحيحة');
+  hideErr(el); CU=user; showPage('p-sup-dash');
+}
+function loginAdm(){
+  const u=val('al-user'),p=val('al-pass'),el=document.getElementById('al-err');
+  if(!u||!p) return showErr(el,'يرجى إدخال اسم المستخدم وكلمة المرور');
+  const user=DB.users().find(x=>x.username===u&&x.password===p&&x.role==='admin');
+  if(!user) return showErr(el,'اسم المستخدم أو كلمة المرور غير صحيحة');
+  hideErr(el); CU=user; showPage('p-adm-dash');
+}
+
+// ══════════════════════════════════════════
+// EMPLOYEE
+// ══════════════════════════════════════════
+function loadSupSel(){
+  const sel=document.getElementById('e-sup');
+  sel.innerHTML='<option value="">-- اختر المشرف --</option>';
+  DB.users().filter(u=>u.role==='supervisor').forEach(s=>{
+    sel.innerHTML+=`<option value="${s.id}">${s.name}${s.department?' - '+s.department:''}</option>`;
+  });
+}
+function submitEmp(){
+  const nm=val('e-name'),id=val('e-id'),mob=val('e-mob'),dept=val('e-dept');
+  const sid=val('e-sup'),dt=val('e-date'),st=val('e-st'),et=val('e-et'),rs=val('e-reason');
+  const el=document.getElementById('e-err');
+  if(!nm||!id||!mob||!dept||!dt||!st||!et||!rs) return showErr(el,'يرجى ملء جميع الحقول المطلوبة');
+  if(!/^[12]\d{9}$/.test(id)) return showErr(el,'رقم الهوية غير صحيح (10 أرقام يبدأ بـ 1 أو 2)');
+  if(!/^05\d{8}$/.test(mob)) return showErr(el,'رقم الجوال غير صحيح (يبدأ بـ 05)');
+
+  hideErr(el);
+  const sup=DB.users().find(s=>s.id===sid);
+  const[sh,sm]=st.split(':').map(Number),[eh,em]=et.split(':').map(Number);
+  let mins=(eh*60+em)-(sh*60+sm);
+  if(mins<=0) mins+=1440;
+  const hrs=(mins/60).toFixed(1);
+  const req={
+    id:'REQ-'+Date.now(),
+    employeeName:nm,idNumber:id,mobile:mob,department:dept,
+    supervisorId:sid,supervisorName:sup?sup.name:'',
+    date:dt,startTime:st,endTime:et,hours:hrs,reason:rs,
+    status:'pending',
+    supSig:null,supSignedAt:null,
+    admSig:null,admSignedAt:null,
+    createdAt:new Date().toLocaleString('ar-SA')
+  };
+  const reqs=DB.reqs(); reqs.push(req); DB.saveR(reqs);
+  ['e-name','e-id','e-mob','e-dept','e-date','e-st','e-et','e-reason'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('e-sup').value='';
+  openM('m-success');
+}
+function newReq(){ closeM('m-success'); loadSupSel(); }
+
+// ══════════════════════════════════════════
+// SUPERVISOR DASH
+// ══════════════════════════════════════════
+function loadSupDash(){
+  if(!CU) return;
+  document.getElementById('sd-name').textContent=CU.name;
+  const all=DB.reqs().filter(r=>r.supervisorId===CU.id);
+  const pend=all.filter(r=>r.status==='pending').length;
+  const appr=all.filter(r=>r.status!=='pending'&&r.status!=='rejected').length;
+  const rej=all.filter(r=>r.status==='rejected').length;
+  document.getElementById('sd-stats').innerHTML=`
+    <div class="sc"><div class="num">${all.length}</div><div class="lbl">الإجمالي</div></div>
+    <div class="sc"><div class="num" style="color:var(--warn)">${pend}</div><div class="lbl">معلقة</div></div>
+    <div class="sc"><div class="num" style="color:var(--ok)">${appr}</div><div class="lbl">موافق عليها</div></div>
+    <div class="sc"><div class="num" style="color:var(--err)">${rej}</div><div class="lbl">مرفوضة</div></div>
+  `;
+  const el=document.getElementById('sd-list');
+  if(!all.length){el.innerHTML=empty('📭','لا توجد طلبات بعد');return;}
+  el.innerHTML=all.sort((a,b)=>b.id.localeCompare(a.id)).map(r=>`
+    <div class="rcard">
+      <div class="rcard-top">
+        <span class="rcard-name">${r.employeeName}</span>${badge(r.status)}
+      </div>
+      <div class="rinfo">
+        <span>📅 <strong>${r.date}</strong></span>
+        <span>⏱️ <strong>${r.startTime}–${r.endTime} (${r.hours} س)</strong></span>
+        <span>🏢 <strong>${r.department}</strong></span>
+        <span>📱 <strong>${r.mobile}</strong></span>
+        <span style="grid-column:1/-1">📝 ${r.reason}</span>
+      </div>
+      ${r.status==='pending'?`
+      <div class="ract">
+        <button class="btn btn-ok" style="flex:1;font-size:.83rem" onclick="openSupSign('${r.id}')">✅ موافقة وتوقيع</button>
+        <button class="btn btn-err" style="font-size:.83rem" onclick="qkReject('${r.id}','sup')">❌ رفض</button>
+      </div>`:''}
+    </div>
+  `).join('');
+}
+function openSupSign(rid){
+  CRid=rid;
+  const r=DB.reqs().find(x=>x.id===rid); if(!r) return;
+  document.getElementById('mss-info').innerHTML=rInfo(r);
+  openM('m-sup-sign');
+  setTimeout(()=>initCanvas('ss-canvas'),80);
+}
+function supApprove(){
+  const cv=document.getElementById('ss-canvas');
+  if(cvEmpty(cv)){toast('⚠️ يرجى رسم التوقيع أولاً');return;}
+  upReq(CRid,{status:'supervisor_approved',supSig:cv.toDataURL(),supSignedAt:now()});
+  closeM('m-sup-sign'); loadSupDash(); toast('✅ تمت الموافقة بنجاح');
+}
+function supReject(){upReq(CRid,{status:'rejected'});closeM('m-sup-sign');loadSupDash();toast('تم رفض الطلب');}
+function qkReject(rid,who){
+  if(!confirm('هل تريد رفض هذا الطلب؟')) return;
+  upReq(rid,{status:'rejected'});
+  if(who==='sup') loadSupDash(); else loadAdmDash();
+}
+
+// ══════════════════════════════════════════
+// ADMIN DASH
+// ══════════════════════════════════════════
+function loadAdmDash(){
+  if(!CU) return;
+  const reqs=DB.reqs();
+  const pend=reqs.filter(r=>r.status==='pending').length;
+  const sap=reqs.filter(r=>r.status==='supervisor_approved').length;
+  const appr=reqs.filter(r=>r.status==='admin_approved').length;
+  const rej=reqs.filter(r=>r.status==='rejected').length;
+  document.getElementById('ad-stats').innerHTML=`
+    <div class="sc"><div class="num">${reqs.length}</div><div class="lbl">الإجمالي</div></div>
+    <div class="sc"><div class="num" style="color:var(--warn)">${pend}</div><div class="lbl">بانتظار المشرف</div></div>
+    <div class="sc"><div class="num" style="color:var(--info)">${sap}</div><div class="lbl">بانتظار الإدارة</div></div>
+    <div class="sc"><div class="num" style="color:var(--ok)">${appr}</div><div class="lbl">معتمدة</div></div>
+    <div class="sc"><div class="num" style="color:var(--err)">${rej}</div><div class="lbl">مرفوضة</div></div>
+  `;
+  const el=document.getElementById('ad-list');
+  if(!reqs.length){el.innerHTML=empty('📭','لا توجد طلبات بعد');return;}
+  el.innerHTML=reqs.sort((a,b)=>b.id.localeCompare(a.id)).map(r=>`
+    <div class="rcard">
+      <div class="rcard-top">
+        <span class="rcard-name">${r.employeeName}</span>${badge(r.status)}
+      </div>
+      ${pathBar(r.status)}
+      <div class="rinfo">
+        <span>📅 <strong>${r.date}</strong></span>
+        <span>⏱️ <strong>${r.startTime}–${r.endTime} (${r.hours} س)</strong></span>
+        <span>🏢 <strong>${r.department}</strong></span>
+        <span>👨‍💼 <strong>${r.supervisorName}</strong></span>
+        <span>🪪 <strong>${r.idNumber}</strong></span>
+        <span>📱 <strong>${r.mobile}</strong></span>
+        <span style="grid-column:1/-1">📝 ${r.reason}</span>
+      </div>
+      <div class="ract">
+        ${r.status==='supervisor_approved'?`<button class="btn btn-p" style="flex:1;font-size:.83rem" onclick="openAdmSign('${r.id}')">🏛️ توقيع الإدارة</button>`:''}
+        ${r.status==='admin_approved'?`<button class="btn btn-ok" style="flex:1;font-size:.83rem" onclick="openPDF('${r.id}')">📄 تصدير PDF</button>`:''}
+        ${r.status!=='rejected'&&r.status!=='admin_approved'?`<button class="btn btn-err" style="font-size:.83rem" onclick="qkReject('${r.id}','adm')">❌ رفض</button>`:''}
+      </div>
+    </div>
+  `).join('');
+}
+function openAdmSign(rid){
+  CRid=rid; admUpSig=null;
+  const r=DB.reqs().find(x=>x.id===rid); if(!r) return;
+  document.getElementById('mas-info').innerHTML=rInfo(r);
+  setSigMode('draw'); openM('m-adm-sign');
+  setTimeout(()=>initCanvas('as-canvas'),80);
+}
+function setSigMode(m){
+  admSigMode=m;
+  const dd=document.getElementById('adm-draw'),up=document.getElementById('adm-up');
+  const bd=document.getElementById('sb-draw'),bu=document.getElementById('sb-up');
+  if(m==='draw'){
+    dd.style.display='block';up.style.display='none';
+    bd.className='btn btn-p';bu.className='btn btn-s';
+    bd.style.fontSize='.8rem';bu.style.fontSize='.8rem';
+    bd.style.padding='.4rem .8rem';bu.style.padding='.4rem .8rem';
+  } else {
+    dd.style.display='none';up.style.display='block';
+    bu.className='btn btn-p';bd.className='btn btn-s';
+    bu.style.fontSize='.8rem';bd.style.fontSize='.8rem';
+    bu.style.padding='.4rem .8rem';bd.style.padding='.4rem .8rem';
+  }
+}
+function prevAdmSig(inp){
+  if(!inp.files[0]) return;
+  const fr=new FileReader();
+  fr.onload=e=>{
+    admUpSig=e.target.result;
+    document.getElementById('as-prev').innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:80px;border-radius:8px;background:#fff;padding:4px">`;
+  };
+  fr.readAsDataURL(inp.files[0]);
+}
+function admApprove(){
+  let sig=null;
+  if(admSigMode==='draw'){
+    const cv=document.getElementById('as-canvas');
+    if(cvEmpty(cv)){toast('⚠️ يرجى رسم التوقيع أولاً');return;}
+    sig=cv.toDataURL();
+  } else {
+    if(!admUpSig){toast('⚠️ يرجى رفع صورة التوقيع');return;}
+    sig=admUpSig;
+  }
+  upReq(CRid,{status:'admin_approved',admSig:sig,admSignedAt:now()});
+  closeM('m-adm-sign'); loadAdmDash(); toast('✅ تم اعتماد الطلب بنجاح');
+}
+function admReject(){upReq(CRid,{status:'rejected'});closeM('m-adm-sign');loadAdmDash();toast('تم رفض الطلب');}
+
+// ══════════════════════════════════════════
+// PDF
+// ══════════════════════════════════════════
+function openPDF(rid){
+  const r=DB.reqs().find(x=>x.id===rid); if(!r) return;
+  CRid=rid;
+  const cfg=DB.cfg();
+  const logoH=cfg.logo?`<img src="${cfg.logo}" style="height:55px;object-fit:contain">`:`<div style="font-size:1.2rem;font-weight:900">🏢 الشركة</div>`;
+  document.getElementById('pdf-content').innerHTML=`
+    <div style="direction:rtl;font-family:Cairo,Arial,sans-serif;color:#111;font-size:13px">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #C9A84C;padding-bottom:12px;margin-bottom:16px">
+        ${logoH}
+        <div style="text-align:center">
+          <div style="font-size:15px;font-weight:900">طلب عمل إضافي (أوفرتايم)</div>
+          <div style="font-size:11px;color:#666;margin-top:3px">رقم الطلب: ${r.id}</div>
+          <div style="font-size:11px;color:#666">تاريخ التقديم: ${r.createdAt}</div>
+        </div>
+        <div style="width:55px"></div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12px">
+        ${row2('اسم الموظف',r.employeeName,'رقم الهوية',r.idNumber)}
+        ${row2('رقم الجوال',r.mobile,'القسم / الإدارة',r.department)}
+        ${row2('المشرف المسؤول',r.supervisorName,'تاريخ الأوفرتايم',r.date)}
+        ${row2('وقت البداية',r.startTime,'وقت النهاية',r.endTime)}
+        ${row2('عدد الساعات',r.hours+' ساعة','','‎')}
+        <tr>
+          <td style="${tdL}">سبب الأوفرتايم</td>
+          <td colspan="3" style="${tdV}">${r.reason}</td>
+        </tr>
+      </table>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px">
+        <div style="border:1px solid #ddd;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-weight:800;margin-bottom:6px;color:#0A1628">توقيع المشرف</div>
+          <div style="font-size:11px;color:#666;margin-bottom:6px">${r.supervisorName}</div>
+          ${r.supSig?`<img src="${r.supSig}" style="max-width:100%;max-height:55px;object-fit:contain">`:'<div style="height:50px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:11px">لم يوقع</div>'}
+          <div style="font-size:10px;color:#999;margin-top:6px">${r.supSignedAt||''}</div>
+        </div>
+        <div style="border:1px solid #ddd;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-weight:800;margin-bottom:6px;color:#0A1628">توقيع الإدارة</div>
+          <div style="font-size:11px;color:#666;margin-bottom:6px">الإدارة العامة</div>
+          ${r.admSig?`<img src="${r.admSig}" style="max-width:100%;max-height:55px;object-fit:contain">`:'<div style="height:50px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:11px">لم يوقع</div>'}
+          <div style="font-size:10px;color:#999;margin-top:6px">${r.admSignedAt||''}</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px;text-align:center;font-size:12px;color:#15803d;font-weight:700">
+        ✅ تمت الموافقة على الطلب واعتماده من جميع الأطراف
+      </div>
+    </div>
+  `;
+  openM('m-pdf');
+}
+const tdL='border:1px solid #e5e7eb;padding:7px 10px;background:#f9fafb;font-weight:700;width:28%';
+const tdV='border:1px solid #e5e7eb;padding:7px 10px';
+function row2(l1,v1,l2,v2){
+  return `<tr><td style="${tdL}">${l1}</td><td style="${tdV}">${v1}</td><td style="${tdL}">${l2}</td><td style="${tdV}">${v2}</td></tr>`;
+}
+async function exportPDF(){
+  const el=document.getElementById('pdf-content');
+  try{
+    const cv=await html2canvas(el,{scale:2.5,useCORS:true,backgroundColor:'#ffffff',logging:false});
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF('p','mm','a4');
+    const w=pdf.internal.pageSize.getWidth();
+    const h=(cv.height*w)/cv.width;
+    if(h>297){
+      const pages=Math.ceil(h/297);
+      for(let i=0;i<pages;i++){
+        if(i>0) pdf.addPage();
+        pdf.addImage(cv.toDataURL('image/png'),'PNG',0,-(i*297),w,h);
+      }
+    } else {
+      pdf.addImage(cv.toDataURL('image/png'),'PNG',0,0,w,h);
+    }
+    pdf.save(`overtime-${CRid}.pdf`);
+    toast('✅ تم تحميل الملف بنجاح');
+  } catch(e){
+    toast('⚠️ حدث خطأ أثناء التصدير');
+    console.error(e);
+  }
+}
+
+// ══════════════════════════════════════════
+// SUPERVISOR MANAGEMENT
+// ══════════════════════════════════════════
+function createSup(){
+  const nm=val('ns-name'),us=val('ns-user'),pw=val('ns-pass');
+  const dp=val('ns-dept'),id=val('ns-id'),mb=val('ns-mob');
+  const el=document.getElementById('ns-err');
+  if(!nm||!us||!pw||!dp||!id||!mb) return showErr(el,'يرجى ملء جميع الحقول');
+  if(DB.users().find(u=>u.username===us)) return showErr(el,'اسم المستخدم مستخدم بالفعل');
+  hideErr(el);
+  const users=DB.users();
+  users.push({id:'SUP-'+Date.now(),username:us,password:pw,role:'supervisor',name:nm,department:dp,idNumber:id,mobile:mb,createdAt:now()});
+  DB.saveU(users);
+  ['ns-name','ns-user','ns-pass','ns-dept','ns-id','ns-mob'].forEach(i=>document.getElementById(i).value='');
+  loadSupsList(); toast('✅ تم إنشاء حساب المشرف بنجاح');
+}
+function loadSupsList(){
+  const sups=DB.users().filter(u=>u.role==='supervisor');
+  const el=document.getElementById('sups-list');
+  if(!sups.length){el.innerHTML=empty('👥','لا يوجد مشرفون بعد');return;}
+  el.innerHTML=sups.map(s=>`
+    <div class="sup-item">
+      <div class="sup-item-info">
+        <div class="name">${s.name}</div>
+        <div class="meta">👤 ${s.username} &nbsp;|&nbsp; 🏢 ${s.department} &nbsp;|&nbsp; 📱 ${s.mobile} &nbsp;|&nbsp; 🪪 ${s.idNumber||'—'}</div>
+      </div>
+      <button class="btn btn-err" style="font-size:.78rem;padding:.38rem .7rem;flex-shrink:0" onclick="delSup('${s.id}')">🗑️</button>
+    </div>
+  `).join('');
+}
+function delSup(id){
+  const btn=document.getElementById('del-confirm-btn');
+  btn.onclick=()=>{
+    DB.saveU(DB.users().filter(u=>u.id!==id));
+    closeM('m-del'); loadSupsList(); toast('تم حذف المشرف');
+  };
+  openM('m-del');
+}
+
+// ══════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════
+function loadSettings(){
+  const cfg=DB.cfg();
+  const prev=document.getElementById('logo-prev');
+  const wrap=document.getElementById('logo-prev-wrap');
+  if(cfg.logo){prev.src=cfg.logo;wrap.style.display='block';}
+  else wrap.style.display='none';
+  refreshLogos(cfg.logo);
+}
+function uploadLogo(inp){
+  if(!inp.files[0]) return;
+  const fr=new FileReader();
+  fr.onload=e=>{
+    const cfg=DB.cfg(); cfg.logo=e.target.result; DB.saveC(cfg);
+    loadSettings(); toast('✅ تم رفع الشعار بنجاح');
+  };
+  fr.readAsDataURL(inp.files[0]);
+}
+function removeLogo(){
+  const cfg=DB.cfg(); cfg.logo=null; DB.saveC(cfg);
+  document.getElementById('logo-up').value='';
+  loadSettings(); toast('تم حذف الشعار');
+}
+function refreshLogos(src){
+  ['hl-home','hl-emp','hl-adm'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    if(src){
+      const img=document.createElement('img');
+      img.id=id; img.src=src; img.className='hdr-logo';
+      el.parentNode.replaceChild(img,el);
+    } else {
+      if(el.tagName==='IMG'){
+        const d=document.createElement('div');
+        d.id=id; d.className='hdr-logo-ph'; d.textContent='🏢';
+        el.parentNode.replaceChild(d,el);
+      }
+    }
+  });
+}
+function changePw(){
+  const op=val('cp-old'),np=val('cp-new'),msg=document.getElementById('cp-msg');
+  if(!op||!np){msg.className='al al-err';msg.textContent='يرجى ملء جميع الحقول';msg.style.display='block';return;}
+  const users=DB.users();
+  const idx=users.findIndex(u=>u.role==='admin'&&u.password===op);
+  if(idx===-1){msg.className='al al-err';msg.textContent='كلمة المرور الحالية غير صحيحة';msg.style.display='block';return;}
+  users[idx].password=np; DB.saveU(users);
+  msg.className='al al-ok'; msg.textContent='✅ تم تغيير كلمة المرور بنجاح'; msg.style.display='block';
+  document.getElementById('cp-old').value=''; document.getElementById('cp-new').value='';
+}
+
+// ══════════════════════════════════════════
+// CANVAS
+// ══════════════════════════════════════════
+function initCanvas(cid){
+  const cv=document.getElementById(cid); if(!cv) return;
+  cv.width=cv.parentElement.offsetWidth||300; cv.height=150;
+  const ctx=cv.getContext('2d');
+  ctx.strokeStyle='#111'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
+  let drw=false,lx=0,ly=0;
+  function pos(e){
+    const r=cv.getBoundingClientRect(),sx=cv.width/r.width,sy=cv.height/r.height;
+    return e.touches?{x:(e.touches[0].clientX-r.left)*sx,y:(e.touches[0].clientY-r.top)*sy}
+                    :{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};
+  }
+  cv.onmousedown=cv.ontouchstart=e=>{e.preventDefault();drw=true;const p=pos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,1,0,Math.PI*2);ctx.fill();};
+  cv.onmousemove=cv.ontouchmove=e=>{e.preventDefault();if(!drw)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;};
+  cv.onmouseup=cv.ontouchend=()=>drw=false;
+  cv.onmouseleave=()=>drw=false;
+}
+function clrCanvas(cid){
+  const cv=document.getElementById(cid); if(!cv) return;
+  cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+}
+function cvEmpty(cv){
+  return !cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data.some(v=>v!==0);
+}
+
+// ══════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════
+function openM(id){document.getElementById(id).classList.add('on');}
+function closeM(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.moverlay').forEach(o=>{
+  o.addEventListener('click',function(e){if(e.target===this)closeM(this.id);});
+});
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function val(id){return document.getElementById(id).value.trim();}
+function showErr(el,m){el.textContent=m;el.style.display='block';}
+function hideErr(el){el.style.display='none';}
+function now(){return new Date().toLocaleString('ar-SA');}
+function upReq(id,data){
+  const reqs=DB.reqs();const idx=reqs.findIndex(r=>r.id===id);
+  if(idx===-1) return;
+  Object.assign(reqs[idx],data); DB.saveR(reqs);
+}
+function badge(s){
+  const m={pending:`<span class="badge b-pend">⏳ بانتظار المشرف</span>`,supervisor_approved:`<span class="badge b-sup">👨‍💼 بانتظار الإدارة</span>`,admin_approved:`<span class="badge b-appr">✅ معتمد</span>`,rejected:`<span class="badge b-rej">❌ مرفوض</span>`};
+  return m[s]||'';
+}
+function pathBar(s){
+  const steps=[
+    {key:'pending',label:'تقديم الطلب',done:true},
+    {key:'supervisor_approved',label:'موافقة المشرف',done:s==='supervisor_approved'||s==='admin_approved'},
+    {key:'admin_approved',label:'اعتماد الإدارة',done:s==='admin_approved'}
+  ];
+  const ac=s==='pending'?0:s==='supervisor_approved'?1:s==='admin_approved'?2:-1;
+  const html=steps.map((st,i)=>`
+    <span class="path-step ${st.done?'done':''} ${i===ac?'active':''}">
+      ${st.done?'✅':'⭕'} ${st.label}
+    </span>
+    ${i<steps.length-1?'<span class="path-sep">←</span>':''}
+  `).join('');
+  return `<div class="path">${html}</div>`;
+}
+function rInfo(r){
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+    <span>الموظف: <strong style="color:var(--white)">${r.employeeName}</strong></span>
+    <span>التاريخ: <strong style="color:var(--white)">${r.date}</strong></span>
+    <span>القسم: <strong style="color:var(--white)">${r.department}</strong></span>
+    <span>الساعات: <strong style="color:var(--white)">${r.hours} ساعة</strong></span>
+  </div>`;
+}
+function empty(ico,txt){return `<div class="empty"><div class="ico">${ico}</div><p>${txt}</p></div>`;}
+function toast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#0D1A2E;border:1px solid var(--gold);color:#fff;padding:.65rem 1.25rem;border-radius:12px;font-family:Cairo,sans-serif;font-size:.88rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:fadeUp .3s ease';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+// ══════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════
+DB.init();
+document.getElementById('e-date').valueAsDate=new Date();
+const initCfg=DB.cfg();
+if(initCfg.logo) refreshLogos(initCfg.logo);
+</script>
+</body>
+</html>
