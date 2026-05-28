@@ -348,18 +348,11 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   <div class="modal">
     <div class="m-title">🏛️ توقيع واعتماد الإدارة</div>
     <div id="as-info" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:9px;padding:.82rem;margin-bottom:1rem;font-size:.8rem;color:var(--muted)"></div>
-    <div style="display:flex;gap:.38rem;margin-bottom:.8rem">
-      <button id="sb-d" class="btn btn-p" style="font-size:.78rem;padding:.38rem .8rem" onclick="sigMode('draw')">✍️ رسم</button>
-      <button id="sb-u" class="btn btn-g" style="font-size:.78rem;padding:.38rem .8rem" onclick="sigMode('up')">📤 رفع صورة</button>
-    </div>
-    <div id="as-draw">
-      <div class="sig-b"><canvas id="as-cv" height="140"></canvas></div>
-      <div style="margin-top:.4rem"><button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('as-cv')">🗑️ مسح</button></div>
-    </div>
-    <div id="as-up" style="display:none">
-      <div class="fg"><label>صورة التوقيع</label><input type="file" id="as-f" accept="image/*" onchange="prevSig(this)"></div>
-      <div id="as-prev" style="margin-top:.5rem"></div>
-    </div>
+   <label style="font-size:.76rem;color:var(--gold);font-weight:700;display:block;margin-bottom:.45rem">التوقيع الإلكتروني</label>
+<div class="sig-b"><canvas id="ss-cv" height="140"></canvas></div>
+<div style="margin-top:.4rem;display:flex;gap:.4rem">
+  <button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('ss-cv')">🗑️ مسح</button>
+</div>
     <div style="display:flex;gap:.45rem;margin-top:.95rem;flex-wrap:wrap">
       <button class="btn btn-ok" style="flex:1" onclick="admApprove()">✅ اعتماد</button>
       <button class="btn btn-red" onclick="admReject()">❌ رفض</button>
