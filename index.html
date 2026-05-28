@@ -321,11 +321,20 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   <div class="modal">
     <div class="m-title">✍️ تأكيد وتوقيع المشرف</div>
     <div id="ss-info" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:9px;padding:.82rem;margin-bottom:1rem;font-size:.8rem;color:var(--muted)"></div>
-    <label style="font-size:.76rem;color:var(--gold);font-weight:700;display:block;margin-bottom:.45rem">التوقيع الإلكتروني</label>
-    <div class="sig-b"><canvas id="ss-cv" height="140"></canvas></div>
-    <div style="margin-top:.4rem;display:flex;gap:.4rem">
-      <button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('ss-cv')">🗑️ مسح</button>
-    </div>
+  <div style="display:flex;gap:.38rem;margin-bottom:.8rem">
+  <button id="ssb-d" class="btn btn-p" style="font-size:.78rem;padding:.38rem .8rem" onclick="supSigMode('draw')">✍️ رسم</button>
+  <button id="ssb-u" class="btn btn-g" style="font-size:.78rem;padding:.38rem .8rem" onclick="supSigMode('up')">📤 رفع صورة</button>
+</div>
+<div id="ss-draw">
+  <div class="sig-b"><canvas id="ss-cv" height="140"></canvas></div>
+  <div style="margin-top:.4rem">
+    <button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('ss-cv')">🗑️ مسح</button>
+  </div>
+</div>
+<div id="ss-up" style="display:none">
+  <div class="fg"><label>صورة التوقيع</label><input type="file" id="ss-f" accept="image/*" onchange="prevSupSig(this)"></div>
+  <div id="ss-prev" style="margin-top:.5rem"></div>
+</div>
     <div style="display:flex;gap:.45rem;margin-top:.95rem;flex-wrap:wrap">
       <button class="btn btn-ok" style="flex:1" onclick="supApprove()">✅ موافقة</button>
       <button class="btn btn-red" onclick="supReject()">❌ رفض</button>
@@ -681,12 +690,40 @@ function openSupSign(rid){
     openM('m-ss');
     setTimeout(()=>initCv('ss-cv'), 80);
   });
+let supUpSig = null;
+
+function supSigMode(m){
+  document.getElementById('ss-draw').style.display = m==='draw'?'block':'none';
+  document.getElementById('ss-up').style.display   = m==='up'?'block':'none';
+  document.getElementById('ssb-d').className = 'btn '+(m==='draw'?'btn-p':'btn-g');
+  document.getElementById('ssb-u').className = 'btn '+(m==='up'?'btn-p':'btn-g');
+  ['ssb-d','ssb-u'].forEach(id=>{
+    const e=document.getElementById(id);
+    e.style.fontSize='.78rem'; e.style.padding='.38rem .8rem';
+  });
+}
+
+function prevSupSig(inp){
+  if(!inp.files[0]) return;
+  const fr = new FileReader();
+  fr.onload = e=>{
+    supUpSig = e.target.result;
+    document.getElementById('ss-prev').innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:75px;border-radius:8px;background:#fff;padding:4px">`;
+  };
+  fr.readAsDataURL(inp.files[0]);
 }
 
 async function supApprove(){
-  const cv = document.getElementById('ss-cv');
-  if(cvEmpty(cv)){ toast('⚠️ يرجى رسم التوقيع أولاً'); return; }
-  await updateReq(CRid,{status:'supervisor_approved',supSig:cv.toDataURL(),supAt:tsNow()});
+  let sig = null;
+  if(document.getElementById('ss-up').style.display === 'none'){
+    const cv = document.getElementById('ss-cv');
+    if(cvEmpty(cv)){ toast('⚠️ يرجى رسم التوقيع أولاً'); return; }
+    sig = cv.toDataURL();
+  } else {
+    if(!supUpSig){ toast('⚠️ يرجى رفع صورة التوقيع'); return; }
+    sig = supUpSig;
+  }
+  await updateReq(CRid,{status:'supervisor_approved',supSig:sig,supAt:tsNow()});
   closeM('m-ss'); renderSupDash(); toast('✅ تمت الموافقة بنجاح');
 }
 
