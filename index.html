@@ -11,7 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <style>
 :root{
-  --bg:#080F1E;--bg2:#0D1A2E;--bg3:#121E33;
+  --bg:#080F1E;--bg2:#0D1A2E;
   --card:rgba(13,26,46,0.92);
   --gold:#C9A84C;--gold2:#E8C97A;--gold3:#6B4F0F;
   --white:#F0F4FF;--muted:#6B82A0;
@@ -22,7 +22,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--white);direction:rtl;-webkit-font-smoothing:antialiased;}
-body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 10%,rgba(201,168,76,.06),transparent),radial-gradient(ellipse 60% 60% at 90% 90%,rgba(5,15,35,.8),transparent);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 10%,rgba(201,168,76,.06),transparent);pointer-events:none;z-index:0;}
 .page{position:fixed;inset:0;overflow-y:auto;z-index:2;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .35s ease,transform .35s ease;}
 .page.active{opacity:1;transform:none;pointer-events:all;}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.2rem;background:rgba(6,12,26,.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
@@ -50,7 +50,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .fg{display:flex;flex-direction:column;gap:.32rem;}
 .fg.full{grid-column:1/-1;}
 .fg label{font-size:.76rem;color:var(--gold);font-weight:700;letter-spacing:.03em;}
-.fg input,.fg select,.fg textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.68rem .9rem;color:var(--white);font-family:'Cairo',sans-serif;font-size:.87rem;transition:border-color .2s,box-shadow .2s,background .2s;width:100%;}
+.fg input,.fg select,.fg textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.68rem .9rem;color:var(--white);font-family:'Cairo',sans-serif;font-size:.87rem;transition:all .2s;width:100%;}
 .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--gold);background:rgba(201,168,76,.05);box-shadow:0 0 0 3px rgba(201,168,76,.11);}
 .fg input::placeholder{color:var(--muted);opacity:.65;}
 .fg select option{background:#0D1A2E;}
@@ -61,7 +61,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(201,168,76,.48);}
 .btn-g{background:transparent;border:1px solid var(--border);color:var(--muted);}
 .btn-g:hover{border-color:var(--gold);color:var(--gold);}
-.btn-ok{background:linear-gradient(135deg,#3DD68C,#15803d);color:#fff;box-shadow:0 4px 14px rgba(61,214,140,.25);}
+.btn-ok{background:linear-gradient(135deg,#3DD68C,#15803d);color:#fff;}
 .btn-ok:hover{transform:translateY(-2px);}
 .btn-red{background:linear-gradient(135deg,#FF6060,#dc2626);color:#fff;}
 .btn-red:hover{transform:translateY(-2px);}
@@ -100,12 +100,13 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 @media(max-width:430px){.ri{grid-template-columns:1fr;}.ra{flex-direction:column;}.ra .btn{width:100%;}}
 .path{display:flex;align-items:center;gap:.28rem;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:9px;padding:.5rem .85rem;margin-bottom:.85rem;overflow-x:auto;font-size:.74rem;scrollbar-width:none;}
 .path::-webkit-scrollbar{display:none;}
-.ps{white-space:nowrap;display:flex;align-items:center;gap:.18rem;}
+.ps{white-space:nowrap;}
 .ps.done{color:var(--ok);}
 .ps.act{color:var(--gold);font-weight:700;}
-.psep{color:var(--border);flex-shrink:0;padding:0 .1rem;}
+.psep{color:var(--border);padding:0 .1rem;}
 .sig-b{border:2px dashed var(--border);border-radius:11px;overflow:hidden;background:#f8f8f5;cursor:crosshair;}
 .sig-b canvas{display:block;width:100%;touch-action:none;}
+.sig-tabs{display:flex;gap:.38rem;margin-bottom:.8rem;}
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(12px);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .28s;}
 .mo.on{opacity:1;pointer-events:all;}
 .modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:1.65rem;max-width:490px;width:100%;transform:scale(.9);transition:transform .3s cubic-bezier(.16,1,.3,1);max-height:90vh;overflow-y:auto;}
@@ -130,10 +131,9 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .a1{animation:up .4s ease both;}
 .a2{animation:up .4s .1s ease both;}
 .a3{animation:up .4s .2s ease both;}
+.extra-row{background:rgba(201,168,76,.04);border:1px solid var(--border);border-radius:10px;padding:.85rem;margin-top:.5rem;grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+@media(max-width:520px){.extra-row{grid-template-columns:1fr;}}
 @media(max-width:430px){.hero h2{font-size:1.4rem;}.lbox{padding:1.5rem 1.1rem;}.card{padding:1rem;}.wrap{padding:.9rem;}}
-/* online indicator */
-.online-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;margin-left:5px;}
-.offline-dot{width:8px;height:8px;border-radius:50%;background:var(--err);display:inline-block;margin-left:5px;}
 </style>
 </head>
 <body>
@@ -145,38 +145,23 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
       <div id="hl-h" class="logo-ph">🏢</div>
       <h1>نظام الأوفرتايم</h1>
     </div>
-    <div id="conn-badge" style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:.3rem"></div>
+    <div id="conn-dot" style="font-size:.72rem;color:var(--muted)"></div>
   </div>
   <div class="hero a1">
     <h2>نظام إدارة طلبات الأوفرتايم</h2>
     <p>منصة متكاملة لتقديم ومتابعة طلبات العمل الإضافي</p>
   </div>
   <div class="hgrid">
-    <div class="hcard a1" onclick="go('p-emp')">
-      <span class="ico">📋</span>
-      <h3>طلب أوفرتايم</h3>
-      <p>تقديم طلب عمل إضافي جديد</p>
-    </div>
-    <div class="hcard a2" onclick="go('p-sup-login')">
-      <span class="ico">👨‍💼</span>
-      <h3>بوابة المشرف</h3>
-      <p>مراجعة وتأكيد الطلبات</p>
-    </div>
-    <div class="hcard a3" onclick="go('p-adm-login')">
-      <span class="ico">🏛️</span>
-      <h3>بوابة الإدارة</h3>
-      <p>إدارة الطلبات والمشرفين</p>
-    </div>
+    <div class="hcard a1" onclick="go('p-emp')"><span class="ico">📋</span><h3>طلب أوفرتايم</h3><p>تقديم طلب عمل إضافي جديد</p></div>
+    <div class="hcard a2" onclick="go('p-sup-login')"><span class="ico">👨‍💼</span><h3>بوابة المشرف</h3><p>مراجعة وتأكيد الطلبات</p></div>
+    <div class="hcard a3" onclick="go('p-adm-login')"><span class="ico">🏛️</span><h3>بوابة الإدارة</h3><p>إدارة الطلبات والمشرفين</p></div>
   </div>
 </div>
 
 <!-- EMPLOYEE -->
 <div id="p-emp" class="page">
   <div class="hdr">
-    <div class="hdr-l">
-      <div id="hl-e" class="logo-ph">🏢</div>
-      <h1>طلب أوفرتايم</h1>
-    </div>
+    <div class="hdr-l"><div id="hl-e" class="logo-ph">🏢</div><h1>طلب أوفرتايم</h1></div>
     <button class="btn-sm" onclick="go('p-home')">← رجوع</button>
   </div>
   <div class="wrap">
@@ -188,9 +173,14 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
         <div class="fg"><label>رقم الجوال *</label><input id="e-mob" type="tel" placeholder="05XXXXXXXX" maxlength="10" inputmode="numeric"></div>
         <div class="fg"><label>القسم / الإدارة *</label><input id="e-dept" placeholder="اسم القسم"></div>
         <div class="fg"><label>اسم مسؤول الأوفرتايم <span style="color:var(--muted);font-weight:400">(اختياري)</span></label><input id="e-mgr" placeholder="اسم المسؤول"></div>
-        <div class="fg"><label>تاريخ الأوفرتايم *</label><input id="e-date" type="date"></div>
+        <div class="fg"><label>تاريخ اليوم الأول *</label><input id="e-date" type="date"></div>
         <div class="fg"><label>وقت البداية *</label><input id="e-st" type="time"></div>
         <div class="fg"><label>وقت النهاية *</label><input id="e-et" type="time"></div>
+        <!-- أيام إضافية -->
+        <div class="fg full" id="extra-days"></div>
+        <div class="fg full">
+          <button type="button" class="btn btn-g" style="width:fit-content;font-size:.82rem" onclick="addExtraDay()">➕ إضافة يوم آخر</button>
+        </div>
         <div class="fg full"><label>سبب الأوفرتايم *</label><textarea id="e-reason" placeholder="اذكر سبب طلب العمل الإضافي..."></textarea></div>
       </div>
       <div id="e-err" class="al al-e" style="display:none;margin-top:.85rem"></div>
@@ -218,10 +208,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 <!-- SUP DASH -->
 <div id="p-sup-dash" class="page">
   <div class="hdr">
-    <div class="hdr-l">
-      <div class="logo-ph">👨‍💼</div>
-      <h1>لوحة المشرف</h1>
-    </div>
+    <div class="hdr-l"><div class="logo-ph">👨‍💼</div><h1>لوحة المشرف</h1></div>
     <button class="btn-sm" onclick="logout()">خروج</button>
   </div>
   <div class="wrap">
@@ -251,10 +238,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 <!-- ADM DASH -->
 <div id="p-adm-dash" class="page">
   <div class="hdr">
-    <div class="hdr-l">
-      <div id="hl-a" class="logo-ph">🏛️</div>
-      <h1>لوحة الإدارة</h1>
-    </div>
+    <div class="hdr-l"><div id="hl-a" class="logo-ph">🏛️</div><h1>لوحة الإدارة</h1></div>
     <button class="btn-sm" onclick="logout()">خروج</button>
   </div>
   <div class="wrap">
@@ -288,9 +272,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <div id="t-set" class="tp">
       <div class="st">🏢 شعار الشركة</div>
       <div class="card">
-        <div id="lg-wrap" style="display:none;margin-bottom:.8rem">
-          <img id="lg-img" style="max-height:65px;object-fit:contain;background:rgba(255,255,255,.05);padding:.38rem;border-radius:8px">
-        </div>
+        <div id="lg-wrap" style="display:none;margin-bottom:.8rem"><img id="lg-img" style="max-height:65px;object-fit:contain;background:rgba(255,255,255,.05);padding:.38rem;border-radius:8px"></div>
         <div class="fg" style="margin-bottom:.75rem"><label>رفع شعار الشركة</label><input type="file" id="lg-up" accept="image/*" onchange="uploadLogo(this)"></div>
         <button class="btn btn-red" style="font-size:.78rem;padding:.38rem .75rem" onclick="removeLogo()">🗑️ حذف الشعار</button>
       </div>
@@ -321,20 +303,19 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   <div class="modal">
     <div class="m-title">✍️ تأكيد وتوقيع المشرف</div>
     <div id="ss-info" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:9px;padding:.82rem;margin-bottom:1rem;font-size:.8rem;color:var(--muted)"></div>
-  <div style="display:flex;gap:.38rem;margin-bottom:.8rem">
-  <button id="ssb-d" class="btn btn-p" style="font-size:.78rem;padding:.38rem .8rem" onclick="supSigMode('draw')">✍️ رسم</button>
-  <button id="ssb-u" class="btn btn-g" style="font-size:.78rem;padding:.38rem .8rem" onclick="supSigMode('up')">📤 رفع صورة</button>
-</div>
-<div id="ss-draw">
-  <div class="sig-b"><canvas id="ss-cv" height="140"></canvas></div>
-  <div style="margin-top:.4rem">
-    <button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('ss-cv')">🗑️ مسح</button>
-  </div>
-</div>
-<div id="ss-up" style="display:none">
-  <div class="fg"><label>صورة التوقيع</label><input type="file" id="ss-f" accept="image/*" onchange="prevSupSig(this)"></div>
-  <div id="ss-prev" style="margin-top:.5rem"></div>
-</div>
+    <!-- sig tabs -->
+    <div class="sig-tabs">
+      <button id="ssb-draw" class="btn btn-p" style="font-size:.78rem;padding:.38rem .8rem" onclick="supSigMode('draw')">✍️ رسم</button>
+      <button id="ssb-up" class="btn btn-g" style="font-size:.78rem;padding:.38rem .8rem" onclick="supSigMode('up')">📤 رفع صورة</button>
+    </div>
+    <div id="ss-draw">
+      <div class="sig-b"><canvas id="ss-cv" height="140"></canvas></div>
+      <div style="margin-top:.4rem"><button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('ss-cv')">🗑️ مسح</button></div>
+    </div>
+    <div id="ss-up" style="display:none">
+      <div class="fg"><label>صورة التوقيع</label><input type="file" id="ss-f" accept="image/*" onchange="prevSupSig(this)"></div>
+      <div id="ss-prev" style="margin-top:.5rem"></div>
+    </div>
     <div style="display:flex;gap:.45rem;margin-top:.95rem;flex-wrap:wrap">
       <button class="btn btn-ok" style="flex:1" onclick="supApprove()">✅ موافقة</button>
       <button class="btn btn-red" onclick="supReject()">❌ رفض</button>
@@ -348,11 +329,18 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   <div class="modal">
     <div class="m-title">🏛️ توقيع واعتماد الإدارة</div>
     <div id="as-info" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:9px;padding:.82rem;margin-bottom:1rem;font-size:.8rem;color:var(--muted)"></div>
-   <label style="font-size:.76rem;color:var(--gold);font-weight:700;display:block;margin-bottom:.45rem">التوقيع الإلكتروني</label>
-<div class="sig-b"><canvas id="ss-cv" height="140"></canvas></div>
-<div style="margin-top:.4rem;display:flex;gap:.4rem">
-  <button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('ss-cv')">🗑️ مسح</button>
-</div>
+    <div class="sig-tabs">
+      <button id="asb-draw" class="btn btn-p" style="font-size:.78rem;padding:.38rem .8rem" onclick="admSigMode('draw')">✍️ رسم</button>
+      <button id="asb-up" class="btn btn-g" style="font-size:.78rem;padding:.38rem .8rem" onclick="admSigMode('up')">📤 رفع صورة</button>
+    </div>
+    <div id="as-draw">
+      <div class="sig-b"><canvas id="as-cv" height="140"></canvas></div>
+      <div style="margin-top:.4rem"><button class="btn btn-g" style="font-size:.76rem;padding:.3rem .65rem" onclick="clr('as-cv')">🗑️ مسح</button></div>
+    </div>
+    <div id="as-up" style="display:none">
+      <div class="fg"><label>صورة التوقيع</label><input type="file" id="as-f" accept="image/*" onchange="prevAdmSig(this)"></div>
+      <div id="as-prev" style="margin-top:.5rem"></div>
+    </div>
     <div style="display:flex;gap:.45rem;margin-top:.95rem;flex-wrap:wrap">
       <button class="btn btn-ok" style="flex:1" onclick="admApprove()">✅ اعتماد</button>
       <button class="btn btn-red" onclick="admReject()">❌ رفض</button>
@@ -386,11 +374,10 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 </div>
 
 <script>
-/* ════════════════════════════════════════
-   ضع إعدادات Firebase هنا
-   اذهب لـ: Project Settings > Your Apps > </> > Firebase SDK snippet
-════════════════════════════════════════ */
-const FB_CONFIG =  {
+/* ══════════════════════════════════════
+   🔧 ضع إعدادات Firebase هنا
+══════════════════════════════════════ */
+const FB_CONFIG = {
   apiKey: "AIzaSyAS1z8yaaNgddIEe_ifZuONbJ7hjp21Hqc",
   authDomain: "overtimeswa.firebaseapp.com",
   databaseURL: "https://overtimeswa-default-rtdb.firebaseio.com",
@@ -399,266 +386,187 @@ const FB_CONFIG =  {
   messagingSenderId: "828557764037",
   appId: "1:828557764037:web:a213d5097f949379a2d7ac"
 };
-
-// بيانات الإدارة الافتراضية
 const ADMIN_U = "admin";
 const ADMIN_P = "admin@2024";
 
-/* ════ STATE ════ */
+/* ══ STATE ══ */
 let CU=null, CRid=null, db=null, fbOK=false;
-let admSigMode='draw', admUpSig=null;
+let supUpSig=null, admUpSigData=null;
+let extraDayCount=0;
 
-/* ════ FIREBASE INIT ════ */
+/* ══ FIREBASE ══ */
 function initFB(){
-  // تحقق إذا الإعدادات تم تغييرها
-  if(FB_CONFIG.apiKey === "YOUR_API_KEY"){
-    console.log("⚠️ Firebase not configured — using localStorage");
-    setConn(false);
-    return;
+  if(FB_CONFIG.apiKey==="YOUR_API_KEY"){
+    setConn(false); return;
   }
   try{
     firebase.initializeApp(FB_CONFIG);
     db = firebase.firestore();
-    // تفعيل الكاش المحلي لدعم الوضع بدون انترنت
+    db.settings({cacheSizeBytes:firebase.firestore.CACHE_SIZE_UNLIMITED});
     db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
-    fbOK = true;
-    setConn(true);
-    console.log("✅ Firebase connected");
-  }catch(e){
-    console.error("Firebase init failed:", e);
-    setConn(false);
-  }
+    fbOK=true; setConn(true);
+  }catch(e){ console.error(e); setConn(false); }
 }
-
 function setConn(ok){
-  const el = document.getElementById('conn-badge');
-  if(!el) return;
-  el.innerHTML = ok
-    ? `<span class="online-dot"></span> متصل بالسحابة`
-    : `<span class="offline-dot"></span> وضع محلي`;
+  const el=document.getElementById('conn-dot');
+  if(el) el.innerHTML=ok
+    ?'<span style="color:var(--ok);font-size:.7rem">● متصل</span>'
+    :'<span style="color:var(--err);font-size:.7rem">● محلي</span>';
 }
 
-/* ════ STORAGE — Firebase أو localStorage ════ */
+/* ══ DB HELPERS ══ */
+function wt(p,ms=6000){
+  return Promise.race([p, new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),ms))]);
+}
+function gL(k,d){ try{ return JSON.parse(localStorage.getItem(k)||'null')||d; }catch{ return d; } }
+function sL(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
 
-// ── SETTINGS ──
 async function getSettings(){
-  if(fbOK){
-    try{
-      const d = await withTimeout(db.collection('settings').doc('main').get(), 5000);
-      if(d.exists) return d.data();
-    }catch(e){ console.warn("getSettings:", e.message); }
-  }
-  return getLoc('cfg', {username:ADMIN_U, password:ADMIN_P, logo:null});
+  if(fbOK){ try{ const d=await wt(db.collection('settings').doc('main').get()); if(d.exists) return d.data(); }catch(e){ console.warn('getSettings:',e.message); } }
+  return gL('cfg',{username:ADMIN_U,password:ADMIN_P,logo:null});
 }
-
 async function saveSettings(data){
-  if(fbOK){
-    try{
-      await withTimeout(db.collection('settings').doc('main').set(data, {merge:true}), 5000);
-      return;
-    }catch(e){ console.warn("saveSettings:", e.message); }
-  }
-  setLoc('cfg', {...getLoc('cfg',{}), ...data});
+  if(fbOK){ try{ await wt(db.collection('settings').doc('main').set(data,{merge:true})); return; }catch(e){ console.warn(e.message); } }
+  sL('cfg',{...gL('cfg',{}),...data});
 }
-
-// ── USERS / SUPERVISORS ──
 async function getUsers(){
-  if(fbOK){
-    try{
-      const s = await withTimeout(db.collection('supervisors').get(), 5000);
-      return s.docs.map(d=>({id:d.id, ...d.data()}));
-    }catch(e){ console.warn("getUsers:", e.message); }
-  }
-  return getLoc('users', []);
+  if(fbOK){ try{ const s=await wt(db.collection('supervisors').get()); return s.docs.map(d=>({id:d.id,...d.data()})); }catch(e){ console.warn(e.message); } }
+  return gL('users',[]);
 }
-
 async function addUser(data){
-  if(fbOK){
-    try{
-      const ref = await withTimeout(db.collection('supervisors').add(data), 5000);
-      return ref.id;
-    }catch(e){ console.warn("addUser:", e.message); }
-  }
-  const users = getLoc('users', []);
-  const id = 'SUP'+Date.now();
-  users.push({id, ...data});
-  setLoc('users', users);
-  return id;
+  if(fbOK){ try{ const r=await wt(db.collection('supervisors').add(data)); return r.id; }catch(e){ console.warn(e.message); } }
+  const u=gL('users',[]); const id='SUP'+Date.now(); u.push({id,...data}); sL('users',u); return id;
 }
-
 async function delUser(id){
-  if(fbOK){
-    try{
-      await withTimeout(db.collection('supervisors').doc(id).delete(), 5000);
-      return;
-    }catch(e){ console.warn("delUser:", e.message); }
-  }
-  setLoc('users', getLoc('users',[]).filter(u=>u.id!==id));
+  if(fbOK){ try{ await wt(db.collection('supervisors').doc(id).delete()); return; }catch(e){ console.warn(e.message); } }
+  sL('users',gL('users',[]).filter(u=>u.id!==id));
 }
-
-// ── REQUESTS ──
 async function getReqs(){
-  if(fbOK){
-    try{
-      const s = await withTimeout(db.collection('requests').orderBy('ts','desc').get(), 6000);
-      return s.docs.map(d=>({id:d.id, ...d.data()}));
-    }catch(e){ console.warn("getReqs:", e.message); }
-  }
-  return [...getLoc('reqs',[])].reverse();
+  if(fbOK){ try{ const s=await wt(db.collection('requests').orderBy('ts','desc').get()); return s.docs.map(d=>({id:d.id,...d.data()})); }catch(e){ console.warn(e.message); } }
+  return [...gL('reqs',[])].reverse();
 }
-
 async function addReq(data){
-  if(fbOK){
-    try{
-      data.ts = firebase.firestore.FieldValue.serverTimestamp();
-      const ref = await withTimeout(db.collection('requests').add(data), 6000);
-      return ref.id;
-    }catch(e){ console.warn("addReq Firebase failed, using local:", e.message); }
-  }
-  const reqs = getLoc('reqs', []);
-  const id = 'REQ'+Date.now();
-  data.ts = Date.now();
-  reqs.push({id, ...data});
-  setLoc('reqs', reqs);
-  return id;
+  if(fbOK){ try{ data.ts=firebase.firestore.FieldValue.serverTimestamp(); const r=await wt(db.collection('requests').add(data)); return r.id; }catch(e){ console.warn(e.message); } }
+  const reqs=gL('reqs',[]); const id='REQ'+Date.now(); data.ts=Date.now(); reqs.push({id,...data}); sL('reqs',reqs); return id;
+}
+async function updateReq(id,data){
+  if(fbOK){ try{ await wt(db.collection('requests').doc(id).update(data)); return; }catch(e){ console.warn(e.message); } }
+  const reqs=gL('reqs',[]); const i=reqs.findIndex(r=>r.id===id); if(i!==-1){Object.assign(reqs[i],data);sL('reqs',reqs);}
 }
 
-async function updateReq(id, data){
-  if(fbOK){
-    try{
-      await withTimeout(db.collection('requests').doc(id).update(data), 5000);
-      return;
-    }catch(e){ console.warn("updateReq Firebase failed, using local:", e.message); }
-  }
-  const reqs = getLoc('reqs', []);
-  const i = reqs.findIndex(r=>r.id===id);
-  if(i!==-1){ Object.assign(reqs[i], data); setLoc('reqs', reqs); }
-}
-
-// ── UTILS ──
-function withTimeout(promise, ms){
-  const t = new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), ms));
-  return Promise.race([promise, t]);
-}
-function getLoc(k, def){ try{ return JSON.parse(localStorage.getItem(k)||'null')||def; }catch{ return def; } }
-function setLoc(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
-
-/* ════ NAV ════ */
+/* ══ NAV ══ */
 function go(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const pg = document.getElementById(id);
-  if(pg){ pg.classList.add('active'); pg.scrollTop=0; }
+  const pg=document.getElementById(id); if(pg){pg.classList.add('active');pg.scrollTop=0;}
   if(id==='p-sup-dash') renderSupDash();
   if(id==='p-adm-dash') renderAdmDash();
 }
-
-function stab(tid, btn){
+function stab(tid,btn){
   document.querySelectorAll('.tp').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
-  document.getElementById(tid).classList.add('on');
-  btn.classList.add('on');
+  document.getElementById(tid).classList.add('on'); btn.classList.add('on');
   if(tid==='t-sup') renderSupsList();
   if(tid==='t-set') loadSettings();
 }
-
 function logout(){
-  CU = null;
-  ['sl-u','sl-p','al-u','al-p'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
+  CU=null;
+  ['sl-u','sl-p','al-u','al-p'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   go('p-home');
 }
 
-/* ════ AUTH ════ */
+/* ══ AUTH ══ */
 async function loginSup(){
-  const u=gv('sl-u'), p=gv('sl-p'), el=document.getElementById('sl-err');
+  const u=gv('sl-u'),p=gv('sl-p'),el=document.getElementById('sl-err');
   if(!u||!p) return se(el,'يرجى إدخال اسم المستخدم وكلمة المرور');
   setBtn('sl-btn','جار التحقق...',true);
   try{
-    const users = await getUsers();
-    const user = users.find(x=>x.username===u && x.password===p);
-    if(!user){ se(el,'اسم المستخدم أو كلمة المرور غير صحيحة'); }
+    const users=await getUsers();
+    const user=users.find(x=>x.username===u&&x.password===p);
+    if(!user) se(el,'اسم المستخدم أو كلمة المرور غير صحيحة');
     else{ he(el); CU=user; go('p-sup-dash'); }
   }catch(e){ se(el,'حدث خطأ، حاول مرة أخرى'); }
   setBtn('sl-btn','تسجيل الدخول',false);
 }
-
 async function loginAdm(){
-  const u=gv('al-u'), p=gv('al-p'), el=document.getElementById('al-err');
+  const u=gv('al-u'),p=gv('al-p'),el=document.getElementById('al-err');
   if(!u||!p) return se(el,'يرجى إدخال اسم المستخدم وكلمة المرور');
   setBtn('al-btn','جار التحقق...',true);
   try{
-    const cfg = await getSettings();
-    const au = cfg.username||ADMIN_U;
-    const ap = cfg.password||ADMIN_P;
-    if(u!==au || p!==ap){ se(el,'اسم المستخدم أو كلمة المرور غير صحيحة'); }
+    const cfg=await getSettings();
+    if(u!==(cfg.username||ADMIN_U)||p!==(cfg.password||ADMIN_P)) se(el,'اسم المستخدم أو كلمة المرور غير صحيحة');
     else{ he(el); CU={role:'admin',name:'الإدارة'}; go('p-adm-dash'); }
   }catch(e){ se(el,'حدث خطأ، حاول مرة أخرى'); }
   setBtn('al-btn','تسجيل الدخول',false);
 }
 
-/* ════ EMPLOYEE ════ */
-async function submitEmp(){
-  const nm=gv('e-name'), nid=gv('e-nid'), mob=gv('e-mob'), dept=gv('e-dept');
-  const mgr=gv('e-mgr'), dt=gv('e-date'), st=gv('e-st'), et=gv('e-et'), rs=gv('e-reason');
-  const el = document.getElementById('e-err');
-
-  if(!nm||!nid||!mob||!dept||!dt||!st||!et||!rs)
-    return se(el,'⚠️ يرجى ملء جميع الحقول المطلوبة (*)');
-  if(!/^[12]\d{9}$/.test(nid))
-    return se(el,'⚠️ رقم الهوية غير صحيح — 10 أرقام يبدأ بـ 1 أو 2');
-  if(!/^05\d{8}$/.test(mob))
-    return se(el,'⚠️ رقم الجوال غير صحيح — يبدأ بـ 05 ويكون 10 أرقام');
-  he(el);
-
-  const[sh,sm]=st.split(':').map(Number), [eh,em]=et.split(':').map(Number);
-  let mins=(eh*60+em)-(sh*60+sm);
-  if(mins<=0) mins+=1440;
-  const hrs=(mins/60).toFixed(1);
-
-  setBtn('e-btn','جار الإرسال...',true);
-  try{
-    await addReq({
-      name:nm, nid, mob, dept, mgr:mgr||'—',
-      date:dt, st, et, hrs, reason:rs,
-      status:'pending',
-      supSig:null, supAt:null, admSig:null, admAt:null,
-      createdAt: new Date().toLocaleString('ar-SA')
-    });
-    ['e-name','e-nid','e-mob','e-dept','e-mgr','e-st','e-et','e-reason']
-      .forEach(i=>{ const e=document.getElementById(i); if(e) e.value=''; });
-    document.getElementById('e-date').valueAsDate = new Date();
-    openM('m-ok');
-  }catch(e){
-    se(el,'⚠️ فشل الإرسال، حاول مرة أخرى');
-  }
-  setBtn('e-btn','📤 إرسال الطلب',false);
+/* ══ EMPLOYEE ══ */
+function addExtraDay(){
+  extraDayCount++;
+  const div=document.createElement('div');
+  div.className='extra-row';
+  div.innerHTML=`
+    <div class="fg"><label>تاريخ اليوم ${extraDayCount+1} *</label><input class="ed-d" type="date"></div>
+    <div class="fg"><label>وقت البداية *</label><input class="ed-s" type="time"></div>
+    <div class="fg"><label>وقت النهاية *</label><input class="ed-e" type="time"></div>
+    <div class="fg" style="justify-content:flex-end;align-items:flex-end">
+      <button type="button" class="btn btn-red" style="font-size:.78rem;padding:.35rem .7rem" onclick="this.closest('.extra-row').remove()">🗑️ حذف</button>
+    </div>`;
+  document.getElementById('extra-days').appendChild(div);
 }
 
+async function submitEmp(){
+  const nm=gv('e-name'),nid=gv('e-nid'),mob=gv('e-mob'),dept=gv('e-dept');
+  const mgr=gv('e-mgr'),dt=gv('e-date'),st=gv('e-st'),et=gv('e-et'),rs=gv('e-reason');
+  const el=document.getElementById('e-err');
+  if(!nm||!nid||!mob||!dept||!dt||!st||!et||!rs) return se(el,'⚠️ يرجى ملء جميع الحقول المطلوبة (*)');
+  if(!/^[12]\d{9}$/.test(nid)) return se(el,'⚠️ رقم الهوية غير صحيح — 10 أرقام يبدأ بـ 1 أو 2');
+  if(!/^05\d{8}$/.test(mob)) return se(el,'⚠️ رقم الجوال غير صحيح — يبدأ بـ 05');
+  he(el);
+  const calcHrs=(s,e)=>{ const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number); let m=(eh*60+em)-(sh*60+sm); if(m<=0)m+=1440; return (m/60).toFixed(1); };
+  // الأيام الإضافية
+  const days=[{date:dt,st,et,hrs:calcHrs(st,et)}];
+  document.querySelectorAll('.extra-row').forEach(row=>{
+    const d=row.querySelector('.ed-d').value;
+    const s=row.querySelector('.ed-s').value;
+    const e=row.querySelector('.ed-e').value;
+    if(d&&s&&e) days.push({date:d,st:s,et:e,hrs:calcHrs(s,e)});
+  });
+  setBtn('e-btn','جار الإرسال...',true);
+  try{
+    await addReq({name:nm,nid,mob,dept,mgr:mgr||'—',days,reason:rs,status:'pending',supSig:null,supAt:null,admSig:null,admAt:null,createdAt:new Date().toLocaleString('ar-SA')});
+    ['e-name','e-nid','e-mob','e-dept','e-mgr','e-st','e-et','e-reason'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+    document.getElementById('extra-days').innerHTML='';
+    extraDayCount=0;
+    document.getElementById('e-date').valueAsDate=new Date();
+    openM('m-ok');
+  }catch(e){ se(el,'⚠️ فشل الإرسال، حاول مرة أخرى'); }
+  setBtn('e-btn','📤 إرسال الطلب',false);
+}
 function newReq(){ closeM('m-ok'); }
 
-/* ════ SUPERVISOR DASH ════ */
+/* ══ SUP DASH ══ */
 async function renderSupDash(){
-  if(!CU) return;
-  document.getElementById('sd-name').textContent = CU.name;
-  document.getElementById('sd-list').innerHTML = loading();
-  document.getElementById('sd-stats').innerHTML = '';
+  if(!CU)return;
+  document.getElementById('sd-name').textContent=CU.name;
+  document.getElementById('sd-list').innerHTML=loading();
+  document.getElementById('sd-stats').innerHTML='';
   try{
-    const reqs = await getReqs();
-    const pend = reqs.filter(r=>r.status==='pending').length;
-    const appr = reqs.filter(r=>r.status==='supervisor_approved'||r.status==='admin_approved').length;
-    const rej  = reqs.filter(r=>r.status==='rejected').length;
+    const reqs=await getReqs();
+    const pend=reqs.filter(r=>r.status==='pending').length;
+    const appr=reqs.filter(r=>r.status==='supervisor_approved'||r.status==='admin_approved').length;
+    const rej=reqs.filter(r=>r.status==='rejected').length;
     document.getElementById('sd-stats').innerHTML=`
       <div class="sc"><div class="n">${reqs.length}</div><div class="l">الإجمالي</div></div>
       <div class="sc"><div class="n" style="color:var(--warn)">${pend}</div><div class="l">معلقة</div></div>
       <div class="sc"><div class="n" style="color:var(--ok)">${appr}</div><div class="l">موافق عليها</div></div>
       <div class="sc"><div class="n" style="color:var(--err)">${rej}</div><div class="l">مرفوضة</div></div>`;
-    const el = document.getElementById('sd-list');
-    if(!reqs.length){ el.innerHTML=empty('📭','لا توجد طلبات بعد'); return; }
-    el.innerHTML = reqs.map(r=>`
+    const el=document.getElementById('sd-list');
+    if(!reqs.length){el.innerHTML=empty('📭','لا توجد طلبات بعد');return;}
+    el.innerHTML=reqs.map(r=>`
       <div class="rc">
         <div class="rc-top"><span class="rc-name">${r.name}</span>${bdg(r.status)}</div>
         <div class="ri">
-          <span>📅 <strong>${r.date}</strong></span>
-          <span>⏱️ <strong>${r.st}–${r.et} (${r.hrs} س)</strong></span>
+          ${daysInfo(r)}
           <span>🏢 <strong>${r.dept}</strong></span>
           <span>📱 <strong>${r.mob}</strong></span>
           ${r.mgr&&r.mgr!=='—'?`<span>👤 <strong>${r.mgr}</strong></span>`:''}
@@ -670,93 +578,76 @@ async function renderSupDash(){
           <button class="btn btn-red" style="font-size:.82rem" onclick="qrej('${r.id}','sup')">❌ رفض</button>
         </div>`:''}
       </div>`).join('');
-  }catch(e){
-    document.getElementById('sd-list').innerHTML = empty('⚠️','تعذر تحميل الطلبات');
-  }
+  }catch(e){document.getElementById('sd-list').innerHTML=empty('⚠️','تعذر تحميل الطلبات');}
 }
 
-function openSupSign(rid){
-  CRid = rid;
-  getReqs().then(reqs=>{
-    const r = reqs.find(x=>x.id===rid); if(!r) return;
-    document.getElementById('ss-info').innerHTML = rInfo(r);
-    openM('m-ss');
-    setTimeout(()=>initCv('ss-cv'), 80);
-  });
-let supUpSig = null;
-
+/* ══ SUP SIGN ══ */
 function supSigMode(m){
-  document.getElementById('ss-draw').style.display = m==='draw'?'block':'none';
-  document.getElementById('ss-up').style.display   = m==='up'?'block':'none';
-  document.getElementById('ssb-d').className = 'btn '+(m==='draw'?'btn-p':'btn-g');
-  document.getElementById('ssb-u').className = 'btn '+(m==='up'?'btn-p':'btn-g');
-  ['ssb-d','ssb-u'].forEach(id=>{
-    const e=document.getElementById(id);
-    e.style.fontSize='.78rem'; e.style.padding='.38rem .8rem';
-  });
+  document.getElementById('ss-draw').style.display=m==='draw'?'block':'none';
+  document.getElementById('ss-up').style.display=m==='up'?'block':'none';
+  document.getElementById('ssb-draw').className='btn '+(m==='draw'?'btn-p':'btn-g');
+  document.getElementById('ssb-up').className='btn '+(m==='up'?'btn-p':'btn-g');
+  ['ssb-draw','ssb-up'].forEach(id=>{const e=document.getElementById(id);e.style.fontSize='.78rem';e.style.padding='.38rem .8rem';});
 }
-
 function prevSupSig(inp){
-  if(!inp.files[0]) return;
-  const fr = new FileReader();
-  fr.onload = e=>{
-    supUpSig = e.target.result;
-    document.getElementById('ss-prev').innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:75px;border-radius:8px;background:#fff;padding:4px">`;
-  };
+  if(!inp.files[0])return;
+  const fr=new FileReader();
+  fr.onload=e=>{supUpSig=e.target.result;document.getElementById('ss-prev').innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:75px;border-radius:8px;background:#fff;padding:4px">`;};
   fr.readAsDataURL(inp.files[0]);
 }
-
+function openSupSign(rid){
+  CRid=rid; supUpSig=null;
+  getReqs().then(reqs=>{
+    const r=reqs.find(x=>x.id===rid);if(!r)return;
+    document.getElementById('ss-info').innerHTML=rInfo(r);
+    supSigMode('draw'); openM('m-ss');
+    setTimeout(()=>initCv('ss-cv'),80);
+  });
+}
 async function supApprove(){
-  let sig = null;
-  if(document.getElementById('ss-up').style.display === 'none'){
-    const cv = document.getElementById('ss-cv');
-    if(cvEmpty(cv)){ toast('⚠️ يرجى رسم التوقيع أولاً'); return; }
-    sig = cv.toDataURL();
-  } else {
-    if(!supUpSig){ toast('⚠️ يرجى رفع صورة التوقيع'); return; }
-    sig = supUpSig;
+  let sig=null;
+  const drawVisible=document.getElementById('ss-draw').style.display!=='none';
+  if(drawVisible){
+    const cv=document.getElementById('ss-cv');
+    if(cvEmpty(cv)){toast('⚠️ يرجى رسم التوقيع أولاً');return;}
+    sig=cv.toDataURL();
+  }else{
+    if(!supUpSig){toast('⚠️ يرجى رفع صورة التوقيع');return;}
+    sig=supUpSig;
   }
   await updateReq(CRid,{status:'supervisor_approved',supSig:sig,supAt:tsNow()});
   closeM('m-ss'); renderSupDash(); toast('✅ تمت الموافقة بنجاح');
 }
-
 async function supReject(){
   await updateReq(CRid,{status:'rejected'});
   closeM('m-ss'); renderSupDash(); toast('تم رفض الطلب');
 }
 
-async function qrej(rid, who){
-  if(!confirm('هل تريد رفض هذا الطلب؟')) return;
-  await updateReq(rid,{status:'rejected'});
-  if(who==='sup') renderSupDash(); else renderAdmDash();
-}
-
-/* ════ ADMIN DASH ════ */
+/* ══ ADM DASH ══ */
 async function renderAdmDash(){
-  if(!CU) return;
-  document.getElementById('ad-list').innerHTML = loading();
-  document.getElementById('ad-stats').innerHTML = '';
+  if(!CU)return;
+  document.getElementById('ad-list').innerHTML=loading();
+  document.getElementById('ad-stats').innerHTML='';
   try{
-    const reqs = await getReqs();
-    const pend = reqs.filter(r=>r.status==='pending').length;
-    const sap  = reqs.filter(r=>r.status==='supervisor_approved').length;
-    const appr = reqs.filter(r=>r.status==='admin_approved').length;
-    const rej  = reqs.filter(r=>r.status==='rejected').length;
+    const reqs=await getReqs();
+    const pend=reqs.filter(r=>r.status==='pending').length;
+    const sap=reqs.filter(r=>r.status==='supervisor_approved').length;
+    const appr=reqs.filter(r=>r.status==='admin_approved').length;
+    const rej=reqs.filter(r=>r.status==='rejected').length;
     document.getElementById('ad-stats').innerHTML=`
       <div class="sc"><div class="n">${reqs.length}</div><div class="l">الإجمالي</div></div>
       <div class="sc"><div class="n" style="color:var(--warn)">${pend}</div><div class="l">بانتظار المشرف</div></div>
       <div class="sc"><div class="n" style="color:var(--info)">${sap}</div><div class="l">بانتظار الإدارة</div></div>
       <div class="sc"><div class="n" style="color:var(--ok)">${appr}</div><div class="l">معتمدة</div></div>
       <div class="sc"><div class="n" style="color:var(--err)">${rej}</div><div class="l">مرفوضة</div></div>`;
-    const el = document.getElementById('ad-list');
-    if(!reqs.length){ el.innerHTML=empty('📭','لا توجد طلبات بعد'); return; }
-    el.innerHTML = reqs.map(r=>`
+    const el=document.getElementById('ad-list');
+    if(!reqs.length){el.innerHTML=empty('📭','لا توجد طلبات بعد');return;}
+    el.innerHTML=reqs.map(r=>`
       <div class="rc">
         <div class="rc-top"><span class="rc-name">${r.name}</span>${bdg(r.status)}</div>
         ${pathBar(r.status)}
         <div class="ri">
-          <span>📅 <strong>${r.date}</strong></span>
-          <span>⏱️ <strong>${r.st}–${r.et} (${r.hrs} س)</strong></span>
+          ${daysInfo(r)}
           <span>🏢 <strong>${r.dept}</strong></span>
           <span>🪪 <strong>${r.nid}</strong></span>
           <span>📱 <strong>${r.mob}</strong></span>
@@ -769,69 +660,67 @@ async function renderAdmDash(){
           ${r.status!=='rejected'&&r.status!=='admin_approved'?`<button class="btn btn-red" style="font-size:.82rem" onclick="qrej('${r.id}','adm')">❌ رفض</button>`:''}
         </div>
       </div>`).join('');
-  }catch(e){
-    document.getElementById('ad-list').innerHTML = empty('⚠️','تعذر تحميل الطلبات');
-  }
+  }catch(e){document.getElementById('ad-list').innerHTML=empty('⚠️','تعذر تحميل الطلبات');}
 }
 
-function openAdmSign(rid){
-  CRid=rid; admUpSig=null;
-  getReqs().then(reqs=>{
-    const r=reqs.find(x=>x.id===rid); if(!r) return;
-    document.getElementById('as-info').innerHTML = rInfo(r);
-    sigMode('draw'); openM('m-as');
-    setTimeout(()=>initCv('as-cv'), 80);
-  });
+async function qrej(rid,who){
+  if(!confirm('هل تريد رفض هذا الطلب؟'))return;
+  await updateReq(rid,{status:'rejected'});
+  if(who==='sup')renderSupDash();else renderAdmDash();
 }
 
-function sigMode(m){
-  admSigMode = m;
-  document.getElementById('as-draw').style.display = m==='draw'?'block':'none';
-  document.getElementById('as-up').style.display   = m==='up'?'block':'none';
-  document.getElementById('sb-d').className = 'btn '+(m==='draw'?'btn-p':'btn-g');
-  document.getElementById('sb-u').className = 'btn '+(m==='up'?'btn-p':'btn-g');
-  ['sb-d','sb-u'].forEach(id=>{
-    const e=document.getElementById(id);
-    e.style.fontSize='.78rem'; e.style.padding='.38rem .8rem';
-  });
+/* ══ ADM SIGN ══ */
+function admSigMode(m){
+  document.getElementById('as-draw').style.display=m==='draw'?'block':'none';
+  document.getElementById('as-up').style.display=m==='up'?'block':'none';
+  document.getElementById('asb-draw').className='btn '+(m==='draw'?'btn-p':'btn-g');
+  document.getElementById('asb-up').className='btn '+(m==='up'?'btn-p':'btn-g');
+  ['asb-draw','asb-up'].forEach(id=>{const e=document.getElementById(id);e.style.fontSize='.78rem';e.style.padding='.38rem .8rem';});
 }
-
-function prevSig(inp){
-  if(!inp.files[0]) return;
-  const fr = new FileReader();
-  fr.onload = e=>{ admUpSig=e.target.result; document.getElementById('as-prev').innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:75px;border-radius:8px;background:#fff;padding:4px">`; };
+function prevAdmSig(inp){
+  if(!inp.files[0])return;
+  const fr=new FileReader();
+  fr.onload=e=>{admUpSigData=e.target.result;document.getElementById('as-prev').innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:75px;border-radius:8px;background:#fff;padding:4px">`;};
   fr.readAsDataURL(inp.files[0]);
 }
-
+function openAdmSign(rid){
+  CRid=rid; admUpSigData=null;
+  getReqs().then(reqs=>{
+    const r=reqs.find(x=>x.id===rid);if(!r)return;
+    document.getElementById('as-info').innerHTML=rInfo(r);
+    admSigMode('draw'); openM('m-as');
+    setTimeout(()=>initCv('as-cv'),80);
+  });
+}
 async function admApprove(){
-  let sig = null;
-  if(admSigMode==='draw'){
-    const cv = document.getElementById('as-cv');
-    if(cvEmpty(cv)){ toast('⚠️ يرجى رسم التوقيع أولاً'); return; }
-    sig = cv.toDataURL();
-  } else {
-    if(!admUpSig){ toast('⚠️ يرجى رفع صورة التوقيع'); return; }
-    sig = admUpSig;
+  let sig=null;
+  const drawVisible=document.getElementById('as-draw').style.display!=='none';
+  if(drawVisible){
+    const cv=document.getElementById('as-cv');
+    if(cvEmpty(cv)){toast('⚠️ يرجى رسم التوقيع أولاً');return;}
+    sig=cv.toDataURL();
+  }else{
+    if(!admUpSigData){toast('⚠️ يرجى رفع صورة التوقيع');return;}
+    sig=admUpSigData;
   }
   await updateReq(CRid,{status:'admin_approved',admSig:sig,admAt:tsNow()});
   closeM('m-as'); renderAdmDash(); toast('✅ تم اعتماد الطلب بنجاح');
 }
-
 async function admReject(){
   await updateReq(CRid,{status:'rejected'});
   closeM('m-as'); renderAdmDash(); toast('تم رفض الطلب');
 }
 
-/* ════ PDF ════ */
+/* ══ PDF ══ */
 async function openPDF(rid){
-  CRid = rid;
-  const reqs = await getReqs();
-  const r = reqs.find(x=>x.id===rid); if(!r) return;
-  const cfg = await getSettings();
-  const logoH = cfg.logo
-    ? `<img src="${cfg.logo}" style="height:52px;object-fit:contain">`
-    : `<div style="font-weight:900;font-size:1rem">🏢</div>`;
-  const dateStr = r.createdAt || '';
+  CRid=rid;
+  const reqs=await getReqs();
+  const r=reqs.find(x=>x.id===rid);if(!r)return;
+  const cfg=await getSettings();
+  const logoH=cfg.logo?`<img src="${cfg.logo}" style="height:52px;object-fit:contain">`:`<div style="font-weight:900">🏢</div>`;
+  const daysRows=(r.days||[{date:r.date,st:r.st,et:r.et,hrs:r.hrs}]).map(d=>
+    `<tr><td style="${tL}">📅 ${d.date}</td><td style="${tV}" colspan="3">${d.st} — ${d.et} &nbsp;|&nbsp; ${d.hrs} ساعة</td></tr>`
+  ).join('');
   document.getElementById('pdf-c').innerHTML=`
     <div style="direction:rtl;font-family:Cairo,Arial,sans-serif;color:#111;font-size:13px">
       <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #C9A84C;padding-bottom:12px;margin-bottom:15px">
@@ -839,16 +728,15 @@ async function openPDF(rid){
         <div style="text-align:center">
           <div style="font-size:15px;font-weight:900">طلب عمل إضافي (أوفرتايم)</div>
           <div style="font-size:11px;color:#666;margin-top:3px">رقم: ${r.id}</div>
-          <div style="font-size:11px;color:#666">تاريخ التقديم: ${dateStr}</div>
+          <div style="font-size:11px;color:#666">${r.createdAt||''}</div>
         </div>
         <div style="width:52px"></div>
       </div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12px">
         ${r2('اسم الموظف',r.name,'رقم الهوية',r.nid)}
         ${r2('رقم الجوال',r.mob,'القسم',r.dept)}
-        ${r2('مسؤول الأوفرتايم',r.mgr||'—','تاريخ الأوفرتايم',r.date)}
-        ${r2('وقت البداية',r.st,'وقت النهاية',r.et)}
-        ${r2('عدد الساعات',r.hrs+' ساعة','','')}
+        ${r2('مسؤول الأوفرتايم',r.mgr||'—','','')}
+        ${daysRows}
         <tr><td style="${tL}">سبب الأوفرتايم</td><td colspan="3" style="${tV}">${r.reason}</td></tr>
       </table>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px">
@@ -869,203 +757,147 @@ async function openPDF(rid){
     </div>`;
   openM('m-pdf');
 }
-
 const tL='border:1px solid #e5e7eb;padding:7px 10px;background:#f9fafb;font-weight:700;width:28%';
 const tV='border:1px solid #e5e7eb;padding:7px 10px';
 function r2(l1,v1,l2,v2){return `<tr><td style="${tL}">${l1}</td><td style="${tV}">${v1}</td><td style="${tL}">${l2}</td><td style="${tV}">${v2}</td></tr>`;}
-
 async function exportPDF(){
-  const el = document.getElementById('pdf-c');
   try{
-    const cv = await html2canvas(el,{scale:2.5,useCORS:true,backgroundColor:'#fff',logging:false});
+    const cv=await html2canvas(document.getElementById('pdf-c'),{scale:2.5,useCORS:true,backgroundColor:'#fff',logging:false});
     const{jsPDF}=window.jspdf;
-    const pdf = new jsPDF('p','mm','a4');
-    const w = pdf.internal.pageSize.getWidth();
-    const h = (cv.height*w)/cv.width;
-    if(h>297){
-      const pages=Math.ceil(h/297);
-      for(let i=0;i<pages;i++){ if(i>0)pdf.addPage(); pdf.addImage(cv.toDataURL('image/png'),'PNG',0,-(i*297),w,h); }
-    }else{
-      pdf.addImage(cv.toDataURL('image/png'),'PNG',0,0,w,h);
-    }
+    const pdf=new jsPDF('p','mm','a4');
+    const w=pdf.internal.pageSize.getWidth();
+    const h=(cv.height*w)/cv.width;
+    if(h>297){const pages=Math.ceil(h/297);for(let i=0;i<pages;i++){if(i>0)pdf.addPage();pdf.addImage(cv.toDataURL('image/png'),'PNG',0,-(i*297),w,h);}}
+    else pdf.addImage(cv.toDataURL('image/png'),'PNG',0,0,w,h);
     pdf.save(`overtime-${CRid}.pdf`);
     toast('✅ تم التحميل بنجاح');
-  }catch(e){ toast('⚠️ خطأ أثناء التصدير'); console.error(e); }
+  }catch(e){toast('⚠️ خطأ أثناء التصدير');}
 }
 
-/* ════ SUPERVISORS ════ */
+/* ══ SUPERVISORS ══ */
 async function createSup(){
   const nm=gv('ns-nm'),u=gv('ns-u'),p=gv('ns-p'),d=gv('ns-d'),nid=gv('ns-nid'),mob=gv('ns-mob');
-  const el = document.getElementById('ns-err');
+  const el=document.getElementById('ns-err');
   if(!nm||!u||!p||!d||!nid||!mob) return se(el,'يرجى ملء جميع الحقول');
   setBtn('ns-btn','جار الإنشاء...',true);
   try{
-    const users = await getUsers();
-    if(users.find(x=>x.username===u)){ se(el,'اسم المستخدم مستخدم بالفعل'); setBtn('ns-btn','✅ إنشاء الحساب',false); return; }
+    const users=await getUsers();
+    if(users.find(x=>x.username===u)){se(el,'اسم المستخدم مستخدم بالفعل');setBtn('ns-btn','✅ إنشاء الحساب',false);return;}
     he(el);
     await addUser({username:u,password:p,name:nm,department:d,nid,mob,role:'supervisor',createdAt:tsNow()});
-    ['ns-nm','ns-u','ns-p','ns-d','ns-nid','ns-mob'].forEach(i=>{ const e=document.getElementById(i); if(e) e.value=''; });
-    renderSupsList();
-    toast('✅ تم إنشاء حساب المشرف بنجاح');
-  }catch(e){ se(el,'حدث خطأ، حاول مرة أخرى'); }
+    ['ns-nm','ns-u','ns-p','ns-d','ns-nid','ns-mob'].forEach(i=>{const e=document.getElementById(i);if(e)e.value='';});
+    renderSupsList(); toast('✅ تم إنشاء حساب المشرف بنجاح');
+  }catch(e){se(el,'حدث خطأ، حاول مرة أخرى');}
   setBtn('ns-btn','✅ إنشاء الحساب',false);
 }
-
 async function renderSupsList(){
-  const el = document.getElementById('sups-list');
-  el.innerHTML = loading();
+  const el=document.getElementById('sups-list'); el.innerHTML=loading();
   try{
-    const sups = await getUsers();
-    if(!sups.length){ el.innerHTML=empty('👥','لا يوجد مشرفون بعد'); return; }
-    el.innerHTML = sups.map(s=>`
+    const sups=await getUsers();
+    if(!sups.length){el.innerHTML=empty('👥','لا يوجد مشرفون بعد');return;}
+    el.innerHTML=sups.map(s=>`
       <div class="si">
-        <div>
-          <div class="sn">${s.name}</div>
-          <div class="sm">👤 ${s.username} | 🏢 ${s.department} | 📱 ${s.mob} | 🪪 ${s.nid||'—'}</div>
-        </div>
+        <div><div class="sn">${s.name}</div><div class="sm">👤 ${s.username} | 🏢 ${s.department} | 📱 ${s.mob} | 🪪 ${s.nid||'—'}</div></div>
         <button class="btn btn-red" style="font-size:.76rem;padding:.35rem .7rem;flex-shrink:0" onclick="delSupConfirm('${s.id}')">🗑️</button>
       </div>`).join('');
-  }catch(e){ el.innerHTML=empty('⚠️','تعذر تحميل المشرفين'); }
+  }catch(e){el.innerHTML=empty('⚠️','تعذر التحميل');}
 }
-
 function delSupConfirm(id){
-  document.getElementById('del-btn').onclick = async()=>{
-    await delUser(id); closeM('m-del'); renderSupsList(); toast('تم حذف المشرف');
-  };
+  document.getElementById('del-btn').onclick=async()=>{await delUser(id);closeM('m-del');renderSupsList();toast('تم حذف المشرف');};
   openM('m-del');
 }
 
-/* ════ SETTINGS ════ */
+/* ══ SETTINGS ══ */
 async function loadSettings(){
   try{
-    const cfg = await getSettings();
-    const img=document.getElementById('lg-img');
-    const wrap=document.getElementById('lg-wrap');
-    if(cfg.logo){ img.src=cfg.logo; wrap.style.display='block'; }
-    else wrap.style.display='none';
+    const cfg=await getSettings();
+    const img=document.getElementById('lg-img'),wrap=document.getElementById('lg-wrap');
+    if(cfg.logo){img.src=cfg.logo;wrap.style.display='block';}else wrap.style.display='none';
     refreshLogos(cfg.logo);
   }catch(e){}
 }
-
 function uploadLogo(inp){
-  if(!inp.files[0]) return;
-  const fr = new FileReader();
-  fr.onload = async e=>{ await saveSettings({logo:e.target.result}); loadSettings(); toast('✅ تم رفع الشعار'); };
+  if(!inp.files[0])return;
+  const fr=new FileReader();
+  fr.onload=async e=>{await saveSettings({logo:e.target.result});loadSettings();toast('✅ تم رفع الشعار');};
   fr.readAsDataURL(inp.files[0]);
 }
-
-async function removeLogo(){
-  await saveSettings({logo:null});
-  document.getElementById('lg-up').value='';
-  loadSettings(); toast('تم حذف الشعار');
-}
-
+async function removeLogo(){await saveSettings({logo:null});document.getElementById('lg-up').value='';loadSettings();toast('تم حذف الشعار');}
 function refreshLogos(src){
   ['hl-h','hl-e','hl-a'].forEach(id=>{
-    const el = document.getElementById(id); if(!el) return;
-    if(src){
-      if(el.tagName!=='IMG'){
-        const img=document.createElement('img');
-        img.id=id; img.src=src; img.className='logo-img';
-        el.parentNode.replaceChild(img,el);
-      }else el.src=src;
-    }else{
-      if(el.tagName==='IMG'){
-        const d=document.createElement('div');
-        d.id=id; d.className='logo-ph'; d.textContent='🏢';
-        el.parentNode.replaceChild(d,el);
-      }
-    }
+    const el=document.getElementById(id);if(!el)return;
+    if(src){if(el.tagName!=='IMG'){const img=document.createElement('img');img.id=id;img.src=src;img.className='logo-img';el.parentNode.replaceChild(img,el);}else el.src=src;}
+    else{if(el.tagName==='IMG'){const d=document.createElement('div');d.id=id;d.className='logo-ph';d.textContent='🏢';el.parentNode.replaceChild(d,el);}}
   });
 }
-
 async function changePw(){
-  const op=gv('cp-o'), np=gv('cp-n'), msg=document.getElementById('cp-msg');
-  if(!op||!np){ msg.className='al al-e'; msg.textContent='يرجى ملء جميع الحقول'; msg.style.display='block'; return; }
-  const cfg = await getSettings();
-  if(op!==(cfg.password||ADMIN_P)){ msg.className='al al-e'; msg.textContent='كلمة المرور الحالية غير صحيحة'; msg.style.display='block'; return; }
+  const op=gv('cp-o'),np=gv('cp-n'),msg=document.getElementById('cp-msg');
+  if(!op||!np){msg.className='al al-e';msg.textContent='يرجى ملء جميع الحقول';msg.style.display='block';return;}
+  const cfg=await getSettings();
+  if(op!==(cfg.password||ADMIN_P)){msg.className='al al-e';msg.textContent='كلمة المرور الحالية غير صحيحة';msg.style.display='block';return;}
   await saveSettings({password:np});
-  msg.className='al al-ok'; msg.textContent='✅ تم تغيير كلمة المرور بنجاح'; msg.style.display='block';
-  document.getElementById('cp-o').value=''; document.getElementById('cp-n').value='';
+  msg.className='al al-ok';msg.textContent='✅ تم تغيير كلمة المرور بنجاح';msg.style.display='block';
+  document.getElementById('cp-o').value='';document.getElementById('cp-n').value='';
 }
 
-/* ════ CANVAS ════ */
+/* ══ CANVAS ══ */
 function initCv(cid){
-  const cv = document.getElementById(cid); if(!cv) return;
-  cv.width = cv.parentElement.clientWidth||300; cv.height=140;
-  const ctx = cv.getContext('2d');
-  ctx.strokeStyle='#0a0a0a'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
-  let drw=false, lx=0, ly=0;
-  function pos(e){
-    const rc=cv.getBoundingClientRect(), sx=cv.width/rc.width, sy=cv.height/rc.height;
-    return e.touches
-      ?{x:(e.touches[0].clientX-rc.left)*sx, y:(e.touches[0].clientY-rc.top)*sy}
-      :{x:(e.clientX-rc.left)*sx, y:(e.clientY-rc.top)*sy};
-  }
-  cv.onmousedown = cv.ontouchstart = e=>{ e.preventDefault(); drw=true; const p=pos(e); lx=p.x; ly=p.y; ctx.beginPath(); ctx.arc(lx,ly,.8,0,Math.PI*2); ctx.fillStyle='#0a0a0a'; ctx.fill(); };
-  cv.onmousemove = cv.ontouchmove = e=>{ e.preventDefault(); if(!drw) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(p.x,p.y); ctx.stroke(); lx=p.x; ly=p.y; };
-  cv.onmouseup = cv.ontouchend = cv.onmouseleave = ()=>drw=false;
+  const cv=document.getElementById(cid);if(!cv)return;
+  cv.width=cv.parentElement.clientWidth||300;cv.height=140;
+  const ctx=cv.getContext('2d');
+  ctx.strokeStyle='#0a0a0a';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+  let drw=false,lx=0,ly=0;
+  function pos(e){const rc=cv.getBoundingClientRect(),sx=cv.width/rc.width,sy=cv.height/rc.height;return e.touches?{x:(e.touches[0].clientX-rc.left)*sx,y:(e.touches[0].clientY-rc.top)*sy}:{x:(e.clientX-rc.left)*sx,y:(e.clientY-rc.top)*sy};}
+  cv.onmousedown=cv.ontouchstart=e=>{e.preventDefault();drw=true;const p=pos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(lx,ly,.8,0,Math.PI*2);ctx.fillStyle='#0a0a0a';ctx.fill();};
+  cv.onmousemove=cv.ontouchmove=e=>{e.preventDefault();if(!drw)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;};
+  cv.onmouseup=cv.ontouchend=cv.onmouseleave=()=>drw=false;
 }
-function clr(cid){ const cv=document.getElementById(cid); if(cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height); }
-function cvEmpty(cv){ return !cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data.some(v=>v!==0); }
+function clr(cid){const cv=document.getElementById(cid);if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height);}
+function cvEmpty(cv){return !cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data.some(v=>v!==0);}
 
-/* ════ MODALS ════ */
-function openM(id){ document.getElementById(id).classList.add('on'); }
-function closeM(id){ document.getElementById(id).classList.remove('on'); }
-document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',function(e){ if(e.target===this) closeM(this.id); }));
+/* ══ MODALS ══ */
+function openM(id){document.getElementById(id).classList.add('on');}
+function closeM(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeM(this.id);}));
 
-/* ════ HELPERS ════ */
-function gv(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
-function se(el,m){ el.textContent=m; el.style.display='block'; }
-function he(el){ el.style.display='none'; }
-function tsNow(){ return new Date().toLocaleString('ar-SA'); }
-function setBtn(id,txt,dis){ const e=document.getElementById(id); if(!e) return; e.textContent=txt; e.disabled=dis; }
-function loading(){ return `<div class="loading"><div class="spin"></div> جار التحميل...</div>`; }
-function empty(ico,txt){ return `<div class="empty"><div class="ei">${ico}</div><p>${txt}</p></div>`; }
-
-function bdg(s){
-  return {
-    pending:`<span class="bdg b-p">⏳ بانتظار المشرف</span>`,
-    supervisor_approved:`<span class="bdg b-s">👨‍💼 بانتظار الإدارة</span>`,
-    admin_approved:`<span class="bdg b-a">✅ معتمد</span>`,
-    rejected:`<span class="bdg b-r">❌ مرفوض</span>`
-  }[s]||'';
+/* ══ HELPERS ══ */
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function se(el,m){el.textContent=m;el.style.display='block';}
+function he(el){el.style.display='none';}
+function tsNow(){return new Date().toLocaleString('ar-SA');}
+function setBtn(id,txt,dis){const e=document.getElementById(id);if(!e)return;e.textContent=txt;e.disabled=dis;}
+function loading(){return `<div class="loading"><div class="spin"></div> جار التحميل...</div>`;}
+function empty(ico,txt){return `<div class="empty"><div class="ei">${ico}</div><p>${txt}</p></div>`;}
+function daysInfo(r){
+  const days=r.days||[{date:r.date,st:r.st,et:r.et,hrs:r.hrs}];
+  return days.map(d=>`<span>📅 <strong>${d.date}</strong></span><span>⏱️ <strong>${d.st}–${d.et} (${d.hrs}س)</strong></span>`).join('');
 }
-
+function bdg(s){return {pending:`<span class="bdg b-p">⏳ بانتظار المشرف</span>`,supervisor_approved:`<span class="bdg b-s">👨‍💼 بانتظار الإدارة</span>`,admin_approved:`<span class="bdg b-a">✅ معتمد</span>`,rejected:`<span class="bdg b-r">❌ مرفوض</span>`}[s]||'';}
 function pathBar(s){
-  const steps=[
-    {l:'رفع الطلب',done:true},
-    {l:'موافقة المشرف',done:s==='supervisor_approved'||s==='admin_approved'},
-    {l:'اعتماد الإدارة',done:s==='admin_approved'}
-  ];
-  const ac = s==='pending'?0:s==='supervisor_approved'?1:s==='admin_approved'?2:-1;
-  return `<div class="path">${steps.map((st,i)=>`
-    <span class="ps ${st.done?'done':''} ${i===ac?'act':''}">${st.done?'✅':'⭕'} ${st.l}</span>
-    ${i<2?'<span class="psep">‹</span>':''}
-  `).join('')}</div>`;
+  const steps=[{l:'رفع الطلب',done:true},{l:'موافقة المشرف',done:s==='supervisor_approved'||s==='admin_approved'},{l:'اعتماد الإدارة',done:s==='admin_approved'}];
+  const ac=s==='pending'?0:s==='supervisor_approved'?1:2;
+  return `<div class="path">${steps.map((st,i)=>`<span class="ps ${st.done?'done':''} ${i===ac?'act':''}">${st.done?'✅':'⭕'} ${st.l}</span>${i<2?'<span class="psep">‹</span>':''}`).join('')}</div>`;
 }
-
 function rInfo(r){
+  const days=r.days||[{date:r.date,st:r.st,et:r.et,hrs:r.hrs}];
   return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:.38rem">
     <span>الموظف: <strong style="color:var(--white)">${r.name}</strong></span>
-    <span>التاريخ: <strong style="color:var(--white)">${r.date}</strong></span>
     <span>القسم: <strong style="color:var(--white)">${r.dept}</strong></span>
-    <span>الساعات: <strong style="color:var(--white)">${r.hrs} ساعة</strong></span>
+    ${days.map(d=>`<span>📅 <strong style="color:var(--white)">${d.date}</strong></span><span>⏱️ <strong style="color:var(--white)">${d.st}–${d.et} (${d.hrs}س)</strong></span>`).join('')}
   </div>`;
 }
-
 function toast(msg){
-  const t = document.createElement('div');
-  t.textContent = msg;
+  const t=document.createElement('div');
+  t.textContent=msg;
   t.style.cssText='position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);background:#0D1A2E;border:1px solid var(--gold);color:#fff;padding:.6rem 1.3rem;border-radius:11px;font-family:Cairo,sans-serif;font-size:.86rem;z-index:9999;box-shadow:0 8px 22px rgba(0,0,0,.5);white-space:nowrap;animation:up .3s ease;';
   document.body.appendChild(t);
-  setTimeout(()=>t.remove(), 3000);
+  setTimeout(()=>t.remove(),3000);
 }
 
-/* ════ BOOT ════ */
+/* ══ BOOT ══ */
 initFB();
-document.getElementById('e-date').valueAsDate = new Date();
-getSettings().then(cfg=>{ if(cfg && cfg.logo) refreshLogos(cfg.logo); }).catch(()=>{});
+document.getElementById('e-date').valueAsDate=new Date();
+getSettings().then(cfg=>{if(cfg&&cfg.logo)refreshLogos(cfg.logo);}).catch(()=>{});
 </script>
 </body>
 </html>
